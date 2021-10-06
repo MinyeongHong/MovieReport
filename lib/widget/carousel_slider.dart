@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fourthflutter/contents/model_movie.dart';
+import 'package:MovieReviewApp/contents/model_movie.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 class CarouselImage extends StatefulWidget {

@@ -1,8 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:fourthflutter/page/home.dart';
-import 'package:fourthflutter/page/my.dart';
-import 'package:fourthflutter/widget/bottom_bar.dart';
+import 'package:MovieReviewApp/page/list.dart';
+import 'package:MovieReviewApp/page/my.dart';
+import 'package:MovieReviewApp/widget/bottom_bar.dart';
 
 
 Future<void> main() async {
@@ -54,18 +54,20 @@ class _MyAppState extends State<MyApp> {
           primaryColor: Colors.black,
       accentColor: Colors.white),
       home: DefaultTabController(length: 4,
-        child: Scaffold(
+        child: SafeArea(
+          child:Scaffold(
           body:TabBarView(physics: NeverScrollableScrollPhysics(),
             children: [
-              Homescreen(),
-              MyRoom(),
               Container(),
+              Listscreen(),
+              MyRoom(),
               Container(),
             ],
           ),
           bottomNavigationBar: Bottom(),
         ),
       ),
+      )
     );
   }
 }

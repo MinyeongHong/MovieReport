@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fourthflutter/contents/model_movie.dart';
-import 'package:fourthflutter/widget/box_slider.dart';
+import 'package:MovieReviewApp/contents/model_movie.dart';
+import 'package:MovieReviewApp/widget/box_slider.dart';
 
 class MyRoom extends StatefulWidget {
   const MyRoom({Key? key}) : super(key: key);

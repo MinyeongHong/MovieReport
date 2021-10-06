@@ -26,6 +26,16 @@ class Bottom extends StatelessWidget {
               ),
               Tab(
                 icon: Icon(
+                  Icons.list_sharp,
+                  size:20,
+                ),
+                child:Text(
+                  '작품 목록',
+                  style: TextStyle(fontSize: 9),
+                ),
+              ),
+              Tab(
+                icon: Icon(
                   Icons.perm_identity_rounded,
                   size:20,
                 ),
@@ -44,16 +54,6 @@ class Bottom extends StatelessWidget {
                   style: TextStyle(fontSize: 9),
                 ),
               ),
-              Tab(
-                icon: Icon(
-                  Icons.settings,
-                  size:20,
-                ),
-                child:Text(
-                  '설정',
-                  style: TextStyle(fontSize: 9),
-                ),
-              )
             ]
 
         ),

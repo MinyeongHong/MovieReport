@@ -1,4 +1,4 @@
-package com.example.fourthflutter;
+package com.example.MovieReviewApp;
 
 import io.flutter.embedding.android.FlutterActivity;
 
