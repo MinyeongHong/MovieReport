@@ -10,32 +10,7 @@ class MyRoom extends StatefulWidget {
 }
 
 class _MyRoomState extends State<MyRoom> {
-/*
-  List<Movie> seenmovies = [
-    Movie.fromMap({
-      'title': '예시1',
-      'keyword': '공포',
-      'poster': '1kberror.jfif',
-      'review': false,
-      'like': true
-    }),
-    Movie.fromMap({
-      'title': '예시2',
-      'keyword': '공포',
-      'poster': 'rectangle.png',
-      'review': true,
-      'like': false
-    }),
-    Movie.fromMap({
-      'title': '예시3',
-      'keyword': '공포',
-      'poster': 'rectangle.png',
-      'review': false,
-      'like': true
-    }),
-  ];*/
-
-  @override
+ @override
   Widget build(BuildContext context) {
     return
       Scaffold(

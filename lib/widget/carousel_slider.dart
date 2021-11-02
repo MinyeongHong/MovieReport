@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:MovieReviewApp/contents/model_movie.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-
+/*
 class CarouselImage extends StatefulWidget {
   final dynamic movies;
   CarouselImage({required this.movies});
@@ -116,4 +116,4 @@ List<Widget> makeIndicatior(List list,int cur_page){
   }
 
   return result;
-}
+}*/

@@ -15,20 +15,21 @@ class Listscreen extends StatefulWidget {
 
 class _ListscreenState extends State<Listscreen> {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-
   late Stream<QuerySnapshot> streamData;
   @override
   void initState(){
     super.initState();
-    streamData = firestore.collection('Netflix_movie').snapshots(); //스트림데이터 불러오기
+    //streamData = firestore.collection('Contents').doc('Netflix_Movie').collection('액션').snapshots();
+    streamData = firestore.collection('Contents').snapshots();//스트림데이터 불러오기
   }
 
   //스트림 데이터 추출해서 위젯으로 만듦
-  Widget _fetchData(BuildContext context){
+  Widget _fetchData(BuildContext context,List<String> pick){
+    //print(pick);
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('Netflix_movie').snapshots(),
+      stream: FirebaseFirestore.instance.collection('Contents').doc(pick[0]).collection(pick[1]).snapshots(),
       builder:(context,snapshot){
-        if(!snapshot.hasData) return LinearProgressIndicator(backgroundColor: Colors.white,);
+        if(!snapshot.hasData) return CircularProgressIndicator(backgroundColor: Colors.white,);
         return _buildBody(context,snapshot.data!.docs);
       }
     );
@@ -36,58 +37,20 @@ class _ListscreenState extends State<Listscreen> {
 
   Widget _buildBody(BuildContext context,List<DocumentSnapshot> snapshot){
     List<Movie> movies = snapshot.map((d)=>Movie.fromSnapshot(d)).toList();
-    return Container(
-      child: Column(
+    return Column(
           children: [
-          TopBar(),
       BoxSlider(movies: movies),]
-      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return _fetchData(context);
-  }
-}
-
-class TopBar extends StatelessWidget {
-  const TopBar({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          TextButton(
-            onPressed: (){},
-            child: Text("영화",style: TextStyle(fontSize: 18,color: Colors.white,fontWeight: FontWeight.bold),),
-            style: TextButton.styleFrom(
-                backgroundColor: Colors.red,
-                padding: EdgeInsets.fromLTRB(15, 10, 15, 10)
-            ),
-          ),
-          TextButton(
-            onPressed: (){},
-            child: Text("TV 프로그램",style: TextStyle(fontSize: 18,color: Colors.white,fontWeight: FontWeight.bold),),
-            style: TextButton.styleFrom(
-                backgroundColor: Colors.red,
-                padding: EdgeInsets.fromLTRB(15, 10, 15, 10)
-            ),
-          ),
-          TextButton(
-            onPressed: (){},
-            child: Text("이외의 작품",style: TextStyle(fontSize: 18,color: Colors.white,fontWeight: FontWeight.bold),),
-            style: TextButton.styleFrom(
-                backgroundColor: Colors.red,
-                padding: EdgeInsets.fromLTRB(15, 10, 15, 10)
-            ),
-          ),
-        ],
+    final pick = ModalRoute.of(context)!.settings.arguments as List<String>;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(pick[1]),
       ),
+      body: _fetchData(context,pick)
     );
   }
 }
-
