@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:MovieReviewApp/contents/model_movie.dart';
 import 'dart:ui';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+
+String _date = "Date of Birth";
+
 
 class ReviewScreen extends StatelessWidget {
   final Movie movie;
@@ -26,7 +30,20 @@ class ReviewScreen extends StatelessWidget {
                 SizedBox(height: 10,),
                 Text(movie.title,style: TextStyle(fontSize: 25,color: Color(0xFF831010),fontWeight: FontWeight.bold)),
                 SizedBox(height: 10,),
-                TextField(decoration: InputDecoration(
+                TextButton(onPressed:(){
+                  DatePicker.showDatePicker(context,
+                      theme: DatePickerTheme(
+                        containerHeight: 210.0,
+                      ),
+                      showTitleActions: true,
+                      minTime: DateTime(1900, 1, 1),
+                      maxTime: DateTime.now(), onConfirm: (date) {
+                        print('confirm $date');
+                        _date = '${date.day}/${date.month}/${date.year}';
+                       // setState(() {});
+                      }, currentTime: DateTime.now(), locale: LocaleType.en);
+                },
+                  child: TextField(decoration: InputDecoration(
                       labelText: '  when',
                       labelStyle: TextStyle(color: Colors.redAccent,fontWeight: FontWeight.bold),
                       focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(10.0)),
@@ -40,6 +57,7 @@ class ReviewScreen extends StatelessWidget {
                       borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     ),
                   ),),
+                ),
                 SizedBox(height: 10,),
                 TextField(decoration: InputDecoration(
                   labelText: '  where',
