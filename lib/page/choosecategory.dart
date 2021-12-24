@@ -1,11 +1,12 @@
 
 import 'dart:ui';
-
+import 'package:toggle_switch/toggle_switch.dart';
 import 'package:MovieReviewApp/page/list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:MovieReviewApp/widget/bottom_bar.dart';
 import 'package:flutter/painting.dart';
+import 'searching.dart';
 
 class Category extends StatefulWidget {
   const Category({Key? key}) : super(key: key);
@@ -16,7 +17,6 @@ class Category extends StatefulWidget {
 class _CategoryState extends State<Category> {
   List<bool> isSelected=[true,false,false];
   List<String> pick=["Netflix_Movie","액션"];
-
   final List<String> movie_kindof=<String>[
     "최근 등록된 영화",
     "인기 영화",
@@ -51,7 +51,7 @@ class _CategoryState extends State<Category> {
     "스릴러",
     "SF",
     "판타지",
-    "Reality TV", //리얼리티 쇼로 고치기(파이썬도)
+    "리얼리티",
     "애니메이션",
     "다큐멘터리",
     "범죄",
@@ -63,6 +63,10 @@ class _CategoryState extends State<Category> {
   ];
   final List<String> etc_kindof=[
     "상영중인 영화","영화 랭킹","직접 검색하기"];
+  int labelIndex = 0;
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -103,41 +107,38 @@ class _CategoryState extends State<Category> {
       }
 
     return Scaffold(
+      backgroundColor: Color(0xFF1D1E21),
       appBar: AppBar(
-        title: Text("영화 제목을 입력하세요",style: TextStyle(fontSize:15,color: Colors.grey[600]),),
-        actions: [IconButton(onPressed: (){},icon: Icon(Icons.search,))],
+        backgroundColor: Colors.black,
+        title: Text("장르 별 컨텐츠 검색"),
       ),
       body: Column(
-        children: [SizedBox(height: 5,),
-          ToggleButtons(
-          borderWidth: 2,
-          borderRadius: BorderRadius.circular(5.5),
-          renderBorder:true,
-          isSelected:isSelected,
-          selectedColor: Colors.white,
-          textStyle: TextStyle(fontSize:17,fontWeight: FontWeight.normal),
-          color: Color(0xFFF5F5F1),
-          fillColor: Color(0x63E50914),
-          children: [
-            Padding(
-              padding:const EdgeInsets.symmetric(),
-              child: Text("영화"),),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              child: Text("TV 프로그램"),),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              child: Text("그 밖의 작품"),),
-          ],
-          onPressed: (int newIdx){
-            setState(() {
-              for(int i=0; i<isSelected.length; i++){
-                if(i==newIdx) isSelected[i]=true;
-                else isSelected[i]=false;
-              }
-            });
-          },
-        ),
+        children: [
+          SizedBox(height: 15,),
+          ToggleSwitch(
+            initialLabelIndex:labelIndex,
+            minWidth: 150,
+            cornerRadius: 20,
+            activeBgColor: [Color(0xFFC92A2A)],
+            activeFgColor: Colors.white,
+            inactiveBgColor: Color(0x20FFFFFF),
+            inactiveFgColor: Colors.white,
+            totalSwitches: 3,
+            labels: ['영화','TV 프로그램','그 밖의 작품'],
+            radiusStyle: true,
+            animate: true,
+            animationDuration: 170,
+            onToggle: (index) {
+              setState(() {
+                labelIndex = index;
+                for(int i=0; i<isSelected.length; i++){
+                  if(i==index) isSelected[i]=true;
+                  else isSelected[i]=false;
+                }
+              });},
+
+          ),
+          SizedBox(height: 10,),
           Expanded(
           child: ListView(
             children: ListTile.divideTiles(
@@ -146,8 +147,7 @@ class _CategoryState extends State<Category> {
             ).toList(),
           ),
         )
-    ],
-      ),
+      ],),
     );
   }
 }

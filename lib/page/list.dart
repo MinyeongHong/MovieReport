@@ -19,27 +19,47 @@ class _ListscreenState extends State<Listscreen> {
   @override
   void initState(){
     super.initState();
-    //streamData = firestore.collection('Contents').doc('Netflix_Movie').collection('액션').snapshots();
-    streamData = firestore.collection('Contents').snapshots();//스트림데이터 불러오기
+//    streamData = firestore.collection('Contents').snapshots();
+    //스트림데이터 불러오기
   }
 
   //스트림 데이터 추출해서 위젯으로 만듦
   Widget _fetchData(BuildContext context,List<String> pick){
-    //print(pick);
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('Contents').doc(pick[0]).collection(pick[1]).snapshots(),
-      builder:(context,snapshot){
-        if(!snapshot.hasData) return CircularProgressIndicator(backgroundColor: Colors.white,);
-        return _buildBody(context,snapshot.data!.docs);
-      }
-    );
+    print(pick[1][0]+pick[1][1]);
+    if(pick[1][0]+pick[1][1] == '인기'){
+      return StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection(pick[0]).orderBy('timestamp').limit(15).snapshots(),
+          builder:(context,snapshot){
+            if(!snapshot.hasData) return Center(child: CircularProgressIndicator(backgroundColor: Colors.white,));
+            return _buildBody(context,snapshot.data!.docs);
+          }
+      );
+    }
+    else if(pick[1][0]+pick[1][1] == '최근'){
+      return StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection(pick[0]).orderBy('timestamp').limit(15).snapshots(),
+          builder:(context,snapshot){
+            if(!snapshot.hasData) return Center(child: CircularProgressIndicator(backgroundColor: Colors.white,));
+            return _buildBody(context,snapshot.data!.docs);
+          }
+      );
+    }
+    else {
+      return StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection(pick[0]).where('genre',arrayContains: pick[1]).snapshots(),
+          builder:(context,snapshot){
+            if(!snapshot.hasData) return Center(child: CircularProgressIndicator(backgroundColor: Colors.white,));
+            return _buildBody(context,snapshot.data!.docs);
+          }
+      );
+    }
+
   }
 
   Widget _buildBody(BuildContext context,List<DocumentSnapshot> snapshot){
     List<Movie> movies = snapshot.map((d)=>Movie.fromSnapshot(d)).toList();
     return Column(
-          children: [
-      BoxSlider(movies: movies),]
+          children: [BoxSlider(movies: movies),]
     );
   }
 
@@ -49,6 +69,7 @@ class _ListscreenState extends State<Listscreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(pick[1]),
+        backgroundColor: Colors.black,
       ),
       body: _fetchData(context,pick)
     );

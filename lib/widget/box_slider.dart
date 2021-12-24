@@ -1,4 +1,4 @@
-import 'dart:ui';
+//import 'dart:ui';
 
 import 'package:MovieReviewApp/page/detail.dart';
 import 'package:flutter/cupertino.dart';
@@ -25,14 +25,15 @@ class BoxSlider extends StatelessWidget {
                   }
               ));
             },
-            child:Column(
-                children: [
-                  Image.network(movies[i].poster),
-                  Expanded(child:
+            child:
+                Column(
+                    children: [
+                      Image.network(movies[i].poster),
+                      Expanded(child:
                       Text(movies[i].title.toString(),maxLines: 1,overflow: TextOverflow.ellipsis,)
-                  ),
-                ],
-              ),
+                      ),
+                    ],
+                  )
           )
       );
 
@@ -41,10 +42,7 @@ class BoxSlider extends StatelessWidget {
     return results;
   }
 
-    return Container(
-      margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
-      height: 660,
-        color: Color(0xFF221F1F),
+    return Expanded(
         child:GridView.count(
           childAspectRatio: 0.63,
             crossAxisSpacing: 5,

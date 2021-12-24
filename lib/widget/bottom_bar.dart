@@ -26,6 +26,16 @@ class Bottom extends StatelessWidget {
               ),
               Tab(
                 icon: Icon(
+                  Icons.search,
+                  size:20,
+                ),
+                child:Text(
+                  '검색하기',
+                  style: TextStyle(fontSize: 9),
+                ),
+              ),
+              Tab(
+                icon: Icon(
                   Icons.list_sharp,
                   size:20,
                 ),
@@ -44,16 +54,7 @@ class Bottom extends StatelessWidget {
                   style: TextStyle(fontSize: 9),
                 ),
               ),
-              Tab(
-                icon: Icon(
-                  Icons.calendar_today,
-                  size:20,
-                ),
-                child:Text(
-                  '캘린더',
-                  style: TextStyle(fontSize: 9),
-                ),
-              ),
+
             ]
 
         ),

@@ -1,32 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:MovieReviewApp/contents/model_movie.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+
 /*
-class CarouselImage extends StatefulWidget {
-  final dynamic movies;
-  CarouselImage({required this.movies});
-  _CarouselImageState createState() => _CarouselImageState();
-}
-
-class _CarouselImageState extends State<CarouselImage> {
-  late List<Movie> movies;
-  late List<Widget> images;
-  late List<String> keywords;
-  late List<bool> review;
-  late List<bool> likes;
-  int cur_page=0;
-  late String cur_keyword;
-
-  @override
-  void initState(){
-    super.initState();
-    movies = widget.movies;
-    images=movies.map((e) => Image.asset('./images/'+e.poster)).toList();
-    keywords=movies.map((e) => e.keyword).toList();
-    review=movies.map((e) => e.review).toList();
-    likes=movies.map((e) => e.like).toList();
-    cur_keyword=keywords[0];
-  }
+class CarouselImage extends StatelessWidget {
+  final List<Movie> movies;
+  const CarouselImage({Key? key, required this.movies}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -36,21 +15,12 @@ class _CarouselImageState extends State<CarouselImage> {
           Container(
             padding: EdgeInsets.all(20),
           ),
-          CarouselSlider(
-              items: images,
-              options: CarouselOptions(onPageChanged: (index,reason){
-                setState(() {
-                  cur_page=index;
-                  cur_keyword=keywords[cur_page];
-                });
-              }),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(0, 10, 0, 3),
-            child: Text(
-              cur_keyword,
-              style: TextStyle(fontSize: 11),
-            ),
+          CarouselSlider.builder(
+            itemCount: 6,
+            itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) =>
+                Container(
+                  child: Text(itemIndex.toString()),
+                ),
           ),
           Container(
             child: Row(
@@ -59,9 +29,6 @@ class _CarouselImageState extends State<CarouselImage> {
                 Container(
                   child: Column(
                     children: [
-                      if(likes[cur_page])
-                        IconButton(onPressed:(){}, icon: Icon(Icons.check))
-                      else
                         IconButton(onPressed:(){}, icon: Icon(Icons.add)),
                       Text('내가 찜한 컨텐츠', style: TextStyle(fontSize: 11),)
                       ],
@@ -93,7 +60,7 @@ class _CarouselImageState extends State<CarouselImage> {
           Container(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: makeIndicatior(likes, cur_page),
+              //children: makeIndicatior(likes, cur_page),
             ),
           )
         ],
