@@ -39,11 +39,10 @@ class _SearchScreenState extends State<SearchScreen> {
               Expanded(
                   flex: 6,
                   child: TextField(
-
                     onChanged: (val) {
                       setState(() {
                         _searchText = val;
-                        print(_searchText);
+                      //  print(_searchText);
                       });
                     },
                     focusNode: focusNode,
@@ -51,6 +50,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     autofocus: true,
                     controller: _filter,
                     decoration: InputDecoration(
+                      isDense: true,
                       filled: true,
                       fillColor: Colors.white12,
                       prefixIcon: Icon(
@@ -70,7 +70,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 size: 20,color: Colors.grey,
                               ))
                           : Container(),
-                      hintText: '검색',
+                      hintText: '작품명을 검색해주세요',
                       labelStyle: TextStyle(color: Colors.white),
                       focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(5)),

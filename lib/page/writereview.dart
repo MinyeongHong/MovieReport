@@ -28,16 +28,16 @@ class _ReviewScreenState extends State<ReviewScreen> {
   DateTime _selectedDate=DateTime.now();
   late double rated;
   bool ckdate=false;
-  String txt1='';
+  String txt1='myself';
   String txt2='';
   String u_title='';
   String u_poster='';
   String u_genre='';
 
   void _presentDatePicker() {
-    // showDatePicker is a pre-made funtion of Flutter
     showDatePicker(
         context: context,
+        //locale: const Locale('ko', 'KO'),
         initialDate: DateTime.now(),
         firstDate: DateTime(2010),
         lastDate: DateTime.now())
@@ -65,6 +65,8 @@ class _ReviewScreenState extends State<ReviewScreen> {
         ),
         body:SingleChildScrollView(
           child:Container(
+
+            alignment: Alignment.center,
             padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
             child:Column(
                 children: [
@@ -76,7 +78,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                             image:NetworkImage(widget.movie.poster),fit: BoxFit.fitHeight)
                     ),),
                   SizedBox(height: 10,),
-                  Text(widget.movie.title,style: TextStyle(fontSize: 30,color: Color(0xFFF5F5F1),fontWeight: FontWeight.bold)),
+                  Container(child: Text(widget.movie.title,textAlign: TextAlign.center,style: TextStyle(fontSize: 30,color: Color(0xFFF5F5F1),fontWeight: FontWeight.bold))),
                   SizedBox(height: 10,),
                   Container(
                     alignment: Alignment.center,
@@ -128,7 +130,6 @@ class _ReviewScreenState extends State<ReviewScreen> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.all(Radius.circular(10.0)),
                             ),
-
                         ),
                           style: TextStyle(color: Color(0xFFF5F5F1),fontWeight: FontWeight.bold,fontSize: 15),
                           onChanged: (String txt1){this.txt1=txt1;},
@@ -165,18 +166,12 @@ class _ReviewScreenState extends State<ReviewScreen> {
                         shadowColor: Color(0xFF831010),
                         elevation: 3,
                       ),
+                      child: Text("등록하기",
+                      style: TextStyle(fontSize:17,fontWeight: FontWeight.bold,color: Color(0xFFF5F5F1))),
                       onPressed:(){
                         saveDB();
-                        if(context=="리뷰함가기") {
-                          Navigator.push(parentcontext,
-                            MaterialPageRoute(builder: (context) => MyRoom()),);
-                        }
-                        else if (context=="창닫기"){
-                          Navigator.pop(parentcontext);
-                        }
                         },
-                  child: Text("등록하기",
-                      style: TextStyle(fontSize:17,fontWeight: FontWeight.bold,color: Color(0xFFF5F5F1))))
+                  )
                 ]
             ),
           ),
@@ -217,14 +212,17 @@ class _ReviewScreenState extends State<ReviewScreen> {
           ),
         ),
       );
+     // print(this.txt1);
       sucess=false;
     }
 
     if(sucess){
+      Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
+
             content: Text('리뷰가 성공적으로 등록되었습니다!',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,),),
-            backgroundColor: Color(0xFF831010),
+            backgroundColor: Color(0x831010),
             duration: Duration(milliseconds: 1000),
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
@@ -237,7 +235,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
           ),
       );
       await Future.delayed(Duration(seconds: 1));
-      Navigator.pop(context);
+
     }
 
   }

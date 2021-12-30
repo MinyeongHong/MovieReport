@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:get/get.dart';
 import 'package:MovieReviewApp/contents/model_review.dart';
 import 'package:MovieReviewApp/page/my.dart';
 import 'package:MovieReviewApp/widget/user_db_helper.dart';
@@ -10,31 +10,93 @@ import 'dart:ui';
 import 'package:intl/intl.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
-class ViewScreen extends StatefulWidget {
-  ViewScreen({Key? key, required this.id}) : super(key: key);
+class EditScreen extends StatefulWidget {
+  EditScreen({Key? key, required this.id}) : super(key: key);
 
   final String? id;
 
   @override
-  State<ViewScreen> createState() => _ViewScreenState();
+  State<EditScreen> createState() => _EditScreenState();
 }
 
-class _ViewScreenState extends State<ViewScreen> {
-  late DateTime _selectedDate;
+class _EditScreenState extends State<EditScreen> {
+  late BuildContext _context;
 
-  double rated = 0.0;
-
+  DateTime new_selectedDate = DateTime.now();
+  late String _selectedDate;
   bool ckdate = false;
+  bool rebuild=false;
+  double new_rated = 0.0;
+  String rated = '';
 
   String txt1 = '';
-
   String txt2 = '';
 
   String u_title = '';
-
   String u_poster = '';
-
   String u_genre = '';
+  var txtWho = TextEditingController();
+  var txtWhat = TextEditingController();
+
+  void _presentDatePicker() {
+    showDatePicker(
+            context: context,
+            //locale: const Locale('ko', 'KO'),
+            initialDate: DateTime.now(),
+            firstDate: DateTime(2010),
+            lastDate: DateTime.now())
+        .then((pickedDate) {
+      // Check if no date is selected
+      if (pickedDate == null) {
+        return;
+      }
+      setState(() {
+        new_selectedDate = pickedDate;
+        ckdate = true;
+      });
+    });
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    _context = context;
+    return GestureDetector(
+      onTap: (){ FocusScope.of(context).unfocus();},
+      child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.black,
+            title: Text(
+              "내가 작성한 리뷰",
+              style: TextStyle(
+                  fontSize: 20,
+                  color: Color(0xFFF5F5F1),
+                  fontWeight: FontWeight.bold),
+            ),
+            actions: [
+              IconButton(
+                  onPressed: () {
+                    if (new_rated != 0.0) rated = new_rated.toString();
+                    if (ckdate) _selectedDate = new_selectedDate.toString();
+                    updateDB();
+                    ckdate = false;
+                    // new_rated=0.0;
+                    //   new_selectedDate=null;
+                  },
+                  icon: Icon(Icons.save)),
+              IconButton(
+                  onPressed: () {
+                    showAlertDialog(context);
+                    //Navigator.pop(context);
+                  },
+                  icon: Icon(Icons.delete))
+            ],
+          ),
+          body: SingleChildScrollView(
+            child: LoadBuilder(),
+          )),
+    );
+  }
 
   Future<List<Review>> loadreview(String? id) async {
     DBHelper sd = DBHelper();
@@ -46,15 +108,33 @@ class _ViewScreenState extends State<ViewScreen> {
     await sd.delete(id);
   }
 
-  LoadBuilder(){
+  LoadBuilder() {
+
     return FutureBuilder<List<Review>>(
       future: loadreview(widget.id),
-      builder: (BuildContext context,AsyncSnapshot<List<Review>> snapshot){
-        if(snapshot.data!.isEmpty){
-          return Container(child: Text("데이터를 불러올 수 없습니다"),);
-        }
-        else{
+      builder: (BuildContext context, AsyncSnapshot<List<Review>> snapshot) {
+        if (snapshot.data!.isEmpty) {
+          return Container(
+            child: Text("데이터를 불러올 수 없습니다"),
+          );
+        } else {
           Review review = snapshot.data![0];
+
+          if(rebuild==false){
+            rebuild=true;
+          _selectedDate = review.time!;
+          rated = review.rate!;
+          txt1 = review.who!;
+          txt2 = review.talk!;
+          u_title = review.user_title!;
+          u_genre = review.user_genre!;
+          u_poster = review.user_poster!;
+
+          txtWho.text = review.who!;
+          txtWhat.text = review.talk!;
+          }
+
+
           return Container(
             padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
             child: Column(children: [
@@ -62,14 +142,15 @@ class _ViewScreenState extends State<ViewScreen> {
                 width: double.maxFinite,
                 height: 260,
                 decoration: BoxDecoration(
-                    image:DecorationImage(
-                        image:NetworkImage(review.user_poster.toString()),fit: BoxFit.fitHeight)
-                ),
+                    image: DecorationImage(
+                        image: NetworkImage(review.user_poster.toString()),
+                        fit: BoxFit.fitHeight)),
               ),
               SizedBox(
                 height: 10,
               ),
               Text(review.user_title.toString(),
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                       fontSize: 30,
                       color: Color(0xFFF5F5F1),
@@ -91,8 +172,8 @@ class _ViewScreenState extends State<ViewScreen> {
                     color: Colors.amber,
                   ),
                   onRatingUpdate: (rating) {
-                    rated = rating;
-                    print(rating);
+                    new_rated = rating;
+                    print(new_rated);
                   },
                 ),
               ),
@@ -110,30 +191,35 @@ class _ViewScreenState extends State<ViewScreen> {
                       style: OutlinedButton.styleFrom(
                           shape: RoundedRectangleBorder(
                             borderRadius:
-                            BorderRadius.all(Radius.circular(10.0)),
+                                BorderRadius.all(Radius.circular(10.0)),
                           ),
                           side: BorderSide(width: 1, color: Colors.grey)),
-                      child: (review.time!.isEmpty)
-                          ? Icon(
-                        Icons.calendar_today,
-                        color: Color(0xFFF5F5F1),
-                        size: 21,
-                      )
+                      child: (ckdate)
+                          ? Text(
+                              new DateFormat.yMMMd().format(
+                                  DateTime.parse(new_selectedDate.toString())),
+                              style: TextStyle(
+                                  color: Color(0xFFF5F5F1),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15),
+                            )
                           : Text(
-                        new DateFormat.yMMMd().format(DateTime.parse(review.time.toString())),
-                        style: TextStyle(
-                            color: Color(0xFFF5F5F1),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15),
-                      ),
+                              new DateFormat.yMMMd().format(
+                                  DateTime.parse(review.time.toString())),
+                              style: TextStyle(
+                                  color: Color(0xFFF5F5F1),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15),
+                            ),
                       onPressed: () {
-                        // _presentDatePicker();
+                        _presentDatePicker();
                       },
                     ),
                     Flexible(
                       flex: 1,
                       child: TextFormField(
-                        initialValue: review.who,
+                        controller: txtWho,
+                        //  initialValue: review.who,
                         maxLines: 1,
                         decoration: InputDecoration(
                           contentPadding: EdgeInsets.symmetric(horizontal: 16),
@@ -144,19 +230,19 @@ class _ViewScreenState extends State<ViewScreen> {
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius:
-                            BorderRadius.all(Radius.circular(10.0)),
+                                BorderRadius.all(Radius.circular(10.0)),
                             borderSide:
-                            BorderSide(width: 1, color: Color(0xFFF5F5F1)),
+                                BorderSide(width: 1, color: Color(0xFFF5F5F1)),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius:
-                            BorderRadius.all(Radius.circular(10.0)),
+                                BorderRadius.all(Radius.circular(10.0)),
                             borderSide:
-                            BorderSide(width: 1, color: Colors.grey),
+                                BorderSide(width: 1, color: Colors.grey),
                           ),
                           border: OutlineInputBorder(
                             borderRadius:
-                            BorderRadius.all(Radius.circular(10.0)),
+                                BorderRadius.all(Radius.circular(10.0)),
                           ),
                         ),
                         style: TextStyle(
@@ -164,6 +250,7 @@ class _ViewScreenState extends State<ViewScreen> {
                             fontWeight: FontWeight.bold,
                             fontSize: 15),
                         onChanged: (String txt1) {
+
                           this.txt1 = txt1;
                         },
                       ),
@@ -175,7 +262,7 @@ class _ViewScreenState extends State<ViewScreen> {
                 height: 20,
               ),
               TextFormField(
-                initialValue: review.talk,
+                controller: txtWhat,
                 maxLines: null,
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.fromLTRB(15, 15, 3, 15),
@@ -184,8 +271,7 @@ class _ViewScreenState extends State<ViewScreen> {
                       color: Color(0xFFF5F5F1), fontWeight: FontWeight.bold),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                    borderSide:
-                    BorderSide(width: 1, color: Color(0xFFF5F5F1)),
+                    borderSide: BorderSide(width: 1, color: Color(0xFFF5F5F1)),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(10.0)),
@@ -197,6 +283,7 @@ class _ViewScreenState extends State<ViewScreen> {
                 ),
                 onChanged: (String txt2) {
                   this.txt2 = txt2;
+                  print(txtWhat.text);
                 },
               ),
               SizedBox(
@@ -224,26 +311,10 @@ class _ViewScreenState extends State<ViewScreen> {
                 Navigator.pop(_context, "예");
                 setState(() {
                   deletereview(widget.id);
-                Navigator.pop(context);
-
+                //  Navigator.pop(context);
+                  Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+                      builder: (BuildContext context) => MyRoom()), (route) => false);
                 });
-
-                /*ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('리뷰가 성공적으로 등록되었습니다!',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,),),
-                    backgroundColor: Color(0xFF831010),
-                    duration: Duration(milliseconds: 1000),
-                    behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      side: BorderSide(
-                        color: Color(0xFF831010),
-                        width: 2,
-                      ),
-                    ),
-                  ),
-                );*/
-
               },
             ),
             TextButton(
@@ -258,32 +329,7 @@ class _ViewScreenState extends State<ViewScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          title: Text(
-            "내가 작성한 리뷰",
-            style: TextStyle(
-                fontSize: 20,
-                color: Color(0xFFF5F5F1),
-                fontWeight: FontWeight.bold),
-          ),
-          actions: [
-            IconButton(onPressed: (){ updateDB(); }, icon: Icon(Icons.check)),
-            IconButton(onPressed: (){
-              showAlertDialog(context);
-              //Navigator.pop(context);
-            }, icon: Icon(Icons.delete))
-          ],
-        ),
-        body: SingleChildScrollView(
-          child: LoadBuilder(),
-        ));
-  }
-
-  void updateDB(){
+  void updateDB() {
     DBHelper sd = DBHelper();
     var fido = Review(
       id: widget.id,
@@ -296,6 +342,8 @@ class _ViewScreenState extends State<ViewScreen> {
       time: _selectedDate.toString(),
     );
     sd.update(fido);
-    Navigator.pop(context);
+
+    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
+        builder: (BuildContext context) => MyRoom()), (route) => false);
   }
 }

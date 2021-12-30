@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'choosecategory.dart';
+import 'list.dart';
 import 'my.dart';
 
 class Main extends StatefulWidget {
@@ -22,18 +23,19 @@ class Main extends StatefulWidget {
 }
 
 class _MainState extends State<Main> {
+
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(brightness:Brightness.dark, primaryColor: Colors.black),
+        theme:
+            ThemeData(brightness: Brightness.dark, primaryColor: Colors.black),
         home: DefaultTabController(
           length: 4,
           child: SafeArea(
             child: Scaffold(
               body: TabBarView(
-                physics: NeverScrollableScrollPhysics(),
+                physics: ClampingScrollPhysics(),
                 children: [
                   Home(),
                   SearchScreen(),
@@ -41,7 +43,61 @@ class _MainState extends State<Main> {
                   MyRoom(),
                 ],
               ),
-              bottomNavigationBar: Bottom(),
+              bottomNavigationBar: Container(
+                color: Colors.black,
+                child: Container(
+                  height: 65,
+                  child: TabBar(
+                    physics: NeverScrollableScrollPhysics(),
+                      labelColor: Colors.white,
+                      unselectedLabelColor: Colors.white60,
+                      indicatorColor: Colors.transparent,
+                      tabs: <Widget>[
+                        Tab(
+                          icon: Icon(
+                            Icons.home,
+                            size:20,
+                          ),
+                          child:Text(
+                            'Home',
+                            style: TextStyle(fontSize: 9),
+                          ),
+                        ),
+                        Tab(
+                          icon: Icon(
+                            Icons.search,
+                            size:20,
+                          ),
+                          child:Text(
+                            '검색하기',
+                            style: TextStyle(fontSize: 9),
+                          ),
+                        ),
+                        Tab(
+                          icon: Icon(
+                            Icons.list_sharp,
+                            size:20,
+                          ),
+                          child:Text(
+                            '작품 목록',
+                            style: TextStyle(fontSize: 9),
+                          ),
+                        ),
+                        Tab(
+                          icon: Icon(
+                            Icons.perm_identity_rounded,
+                            size:20,
+                          ),
+                          child:Text(
+                            '내 리뷰함',
+                            style: TextStyle(fontSize: 9),
+                          ),
+                        ),
+                      ]
+
+                  ),
+                ),
+              ),
             ),
           ),
         ));
@@ -56,7 +112,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-
+  List<String> pick =[];
   @override
   Widget build(BuildContext context) {
     final loginprovider = Provider.of<AuthServices>(context);
@@ -71,25 +127,51 @@ class _HomeState extends State<Home> {
           Expanded(
             child: Container(
               padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
-             // color: Colors.white,
+              //color: Colors.white,
               child: Row(
                 children: [
                   CircleAvatar(
                       backgroundImage: AssetImage('images/rectangle.png'),
                       radius: 35),
-                  SizedBox(width: 10,),
-                  Text(FirebaseAuth.instance.currentUser!.email.toString()),
-                  TextButton(onPressed: (){loginprovider.logout();}, child: Text("로그아웃"))
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(FirebaseAuth.instance.currentUser!.email.toString() +
+                            " 님, 안녕하세요!",overflow: TextOverflow.visible,maxLines: null,),
+                          TextButton(onPressed: (){loginprovider.logout();}, child: Text("로그아웃"))
+                      ],
+                    ),
+                  )
                 ],
               ),
             ),
           ),
+
           Container(
-            padding: EdgeInsets.all(15),
+            padding: EdgeInsets.fromLTRB(10, 5, 5, 5),
             alignment: Alignment.bottomLeft,
-            child: Text(
-              "Netflix 인기 TV 프로그램",
-              style: TextStyle(fontSize: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Netflix 인기 TV 프로그램",
+                  style: TextStyle(fontSize: 20),
+                ),
+                IconButton(onPressed: (){
+                  pick =["Netflix_TV","인기"];
+                  Navigator.push(context,
+                      MaterialPageRoute(
+                          builder: (context)=>Listscreen(),
+                          settings:RouteSettings(arguments: pick)
+                      )
+                  );
+                }, icon: Icon(Icons.arrow_forward))
+              ],
             ),
           ),
           Expanded(
@@ -102,15 +184,34 @@ class _HomeState extends State<Home> {
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData)
-                      return Center(child: CircularProgressIndicator(color: Colors.white,));
+                      return Center(
+                          child: CircularProgressIndicator(
+                        color: Colors.white,
+                      ));
                     return _buildBody(context, snapshot.data!.docs);
                   }),
             ),
           ),
+          SizedBox(height: 10,),
+
           Container(
-            padding: EdgeInsets.all(15),
+            padding: EdgeInsets.fromLTRB(10, 5, 5, 5),
             alignment: Alignment.bottomLeft,
-            child: Text("Netflix 인기 영화", style: TextStyle(fontSize: 20)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Netflix 인기 영화", style: TextStyle(fontSize: 20)),
+                IconButton(onPressed: (){
+                  pick =["Netflix_Movie","인기"];
+                  Navigator.push(context,
+                      MaterialPageRoute(
+                          builder: (context)=>Listscreen(),
+                          settings:RouteSettings(arguments: pick)
+                      )
+                  );
+                }, icon: Icon(Icons.arrow_forward))
+              ],
+            ),
           ),
           Expanded(
             child: Container(
@@ -123,11 +224,16 @@ class _HomeState extends State<Home> {
                       .snapshots(),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData)
-                      return Center(child: CircularProgressIndicator(color: Colors.white,));
+                      return Center(
+                          child: CircularProgressIndicator(
+                        color: Colors.white,
+                      ));
                     return _buildBody(context, snapshot.data!.docs);
                   }),
             ),
           ),
+          SizedBox(height: 10,),
+
           Container(
             padding: EdgeInsets.all(15),
             alignment: Alignment.bottomLeft,
@@ -137,7 +243,7 @@ class _HomeState extends State<Home> {
               child: Container(
             alignment: Alignment.center,
             child: Text("평가한 컨텐츠가 없습니다 !"),
-          ))
+          )),
         ],
       ),
     );

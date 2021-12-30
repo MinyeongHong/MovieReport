@@ -110,7 +110,7 @@ class _CategoryState extends State<Category> {
       backgroundColor: Color(0xFF1D1E21),
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text("장르 별 컨텐츠 검색"),
+        title: Text("장르 별 컨텐츠 찾기"),
       ),
       body: Column(
         children: [

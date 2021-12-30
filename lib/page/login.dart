@@ -81,12 +81,13 @@ class _LoginState extends State<Login> {
                       },
                       obscureText: true,
                       decoration: InputDecoration(
+                        focusColor:Colors.white,
                           hintStyle: TextStyle(color: Colors.white),
                           hintText: "비밀번호를 입력하세요",
                           prefixIcon:Icon(Icons.vpn_key,color: Colors.white,),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
-                          )
+                          ),
                       ),
                     ),
                     SizedBox(height: 30,),
@@ -96,11 +97,22 @@ class _LoginState extends State<Login> {
                           print("Email: ${_emailController.text}");
                           print("Password: ${_passwordController.text}");
                           await loginprovider.login(_emailController.text.trim(),_passwordController.text.trim());
-                          if(FirebaseAuth.instance.currentUser!.emailVerified==false){
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: const Text("이메일 인증을 완료해주세요!"),
-                            ));
+                          if(FirebaseAuth.instance.currentUser!=null){
+                            if(FirebaseAuth.instance.currentUser!.emailVerified==true){print("로그인 성공");}
+                            else{
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                content: const Text("이메일 인증을 완료해주세요!"),
+                                action: SnackBarAction(
+                                  label: '재전송하기',
+                                  onPressed: () {
+                                    FirebaseAuth.instance.currentUser!.sendEmailVerification();
+                                    // Code to execute.
+                                  },
+                                ),
+                              ));
+                            }
                           }
+
                         }
                       },
                       height: 60,
@@ -111,9 +123,9 @@ class _LoginState extends State<Login> {
                         borderRadius: BorderRadius.circular(15)
                       ),
                       child: loginprovider.isLoading
-                      ? CircularProgressIndicator()
+                      ? CircularProgressIndicator(color: Colors.white,)
                       : Text(
-                        "Login",
+                        "로그인",
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold
