@@ -11,7 +11,6 @@ class CircleSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     List<Widget>makeCircleImages(BuildContext,List<Movie> movies){
       List<Widget> results=[];
       int len=movies.length;

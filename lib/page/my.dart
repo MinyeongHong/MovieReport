@@ -1,18 +1,20 @@
 import 'dart:ui';
 
+import 'package:MovieReviewApp/contents/review_provider.dart';
 import 'package:MovieReviewApp/page/editreview.dart';
 import 'package:MovieReviewApp/page/writereview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:MovieReviewApp/contents/model_review.dart';
 import 'package:MovieReviewApp/widget/user_db_helper.dart';
-import 'package:MovieReviewApp/page/login.dart';
+import 'package:MovieReviewApp/page/auth_login.dart';
 import 'package:MovieReviewApp/contents/model_movie.dart';
 import 'package:MovieReviewApp/widget/box_slider.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class MyRoom extends StatefulWidget {
   const MyRoom({Key? key}) : super(key: key);
@@ -27,8 +29,8 @@ class _MyRoomState extends State<MyRoom> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Color(0xFF1D1E21),
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -57,11 +59,14 @@ class _MyRoomState extends State<MyRoom> {
   Future<List<Review>> loadreview() async {
     DBHelper sd = DBHelper();
     return await sd.reviews();
+
   }
 
   reviewBuilder(BuildContext parentContext) {
+    final review_manager = Provider.of<ReviewProvider>(parentContext);
     return FutureBuilder(
-        future: loadreview(),
+      future: review_manager.loadreview(),
+        //future: reviewlist,
         builder: (context, snapshot) {
           if (snapshot.data != null) {
             if ((snapshot.data as List).length == 0) {
@@ -84,6 +89,7 @@ class _MyRoomState extends State<MyRoom> {
                   children: [
                     InkWell(
                         onTap: () {
+                        //  print({review.rate});
                           Navigator.push(
                               parentContext,
                               CupertinoPageRoute(

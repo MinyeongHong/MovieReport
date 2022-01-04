@@ -1,3 +1,4 @@
+import 'package:MovieReviewApp/contents/review_provider.dart';
 import 'package:MovieReviewApp/widget/auth_service.dart';
 import 'package:MovieReviewApp/widget/auth_wrapper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -27,10 +28,12 @@ class _MyAppState extends State<MyApp> {
         providers: [
           ChangeNotifierProvider<AuthServices>.value(value: AuthServices()),
           StreamProvider<User>.value(
-              value: AuthServices().user, initialData: null)
+              value: AuthServices().user, initialData: null),
+          ChangeNotifierProvider<ReviewProvider>.value(value: ReviewProvider(),),
         ],
         child: MaterialApp(
-            debugShowCheckedModeBanner: false, home: AuthenticationWrapper()));
+          theme:ThemeData(brightness: Brightness.dark, primaryColor: Colors.black),
+            debugShowCheckedModeBanner: false, home: AuthenticationWrapper(),));
   }
 }
 

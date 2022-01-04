@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:MovieReviewApp/contents/review_provider.dart';
 import 'package:get/get.dart';
 import 'package:MovieReviewApp/contents/model_review.dart';
 import 'package:MovieReviewApp/page/my.dart';
@@ -9,6 +10,7 @@ import 'package:MovieReviewApp/contents/model_movie.dart';
 import 'dart:ui';
 import 'package:intl/intl.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:provider/provider.dart';
 
 class EditScreen extends StatefulWidget {
   EditScreen({Key? key, required this.id}) : super(key: key);
@@ -20,7 +22,6 @@ class EditScreen extends StatefulWidget {
 }
 
 class _EditScreenState extends State<EditScreen> {
-  late BuildContext _context;
 
   DateTime new_selectedDate = DateTime.now();
   late String _selectedDate;
@@ -56,11 +57,9 @@ class _EditScreenState extends State<EditScreen> {
       });
     });
   }
-
-
   @override
   Widget build(BuildContext context) {
-    _context = context;
+    final review_manager = Provider.of<ReviewProvider>(context);
     return GestureDetector(
       onTap: (){ FocusScope.of(context).unfocus();},
       child: Scaffold(
@@ -74,22 +73,56 @@ class _EditScreenState extends State<EditScreen> {
                   fontWeight: FontWeight.bold),
             ),
             actions: [
+
+              IconButton(
+                  onPressed: ()  {
+                    showDialog(
+                        context: context,
+                        barrierDismissible: false, // user must tap button!
+                        builder: (BuildContext alert_context) {
+                      return AlertDialog(
+                        title: Text('리뷰 삭제'),
+                        content: Text("삭제하시겠습니까?"),
+                        actions: <Widget>[
+                          TextButton(
+                            child: Text('예'),
+                            onPressed: () {
+                              Navigator.pop(alert_context, "예");
+                              review_manager.deletereview(widget.id);
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          TextButton(
+                            child: Text('아니오'),
+                            onPressed: () {
+                              Navigator.pop(alert_context, "아니오");
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                    );
+                  },
+                  icon: Icon(Icons.delete)),
               IconButton(
                   onPressed: () {
                     if (new_rated != 0.0) rated = new_rated.toString();
                     if (ckdate) _selectedDate = new_selectedDate.toString();
-                    updateDB();
+                    var fido = Review(
+                      id: widget.id,
+                      user_title: this.u_title,
+                      user_poster: this.u_poster,
+                      user_genre: this.u_genre,
+                      rate: rated.toString(),
+                      who: this.txt1,
+                      talk: this.txt2,
+                      time: _selectedDate.toString(),
+                    );
+                    review_manager.editreview(fido);
+                    Navigator.of(context).pop();
                     ckdate = false;
-                    // new_rated=0.0;
-                    //   new_selectedDate=null;
                   },
                   icon: Icon(Icons.save)),
-              IconButton(
-                  onPressed: () {
-                    showAlertDialog(context);
-                    //Navigator.pop(context);
-                  },
-                  icon: Icon(Icons.delete))
             ],
           ),
           body: SingleChildScrollView(
@@ -102,16 +135,10 @@ class _EditScreenState extends State<EditScreen> {
     DBHelper sd = DBHelper();
     return await sd.findreview(id);
   }
-
-  Future<void> deletereview(String? id) async {
-    DBHelper sd = DBHelper();
-    await sd.delete(id);
-  }
-
   LoadBuilder() {
-
     return FutureBuilder<List<Review>>(
       future: loadreview(widget.id),
+      //future: reviewlist,
       builder: (BuildContext context, AsyncSnapshot<List<Review>> snapshot) {
         if (snapshot.data!.isEmpty) {
           return Container(
@@ -122,19 +149,17 @@ class _EditScreenState extends State<EditScreen> {
 
           if(rebuild==false){
             rebuild=true;
-          _selectedDate = review.time!;
-          rated = review.rate!;
-          txt1 = review.who!;
-          txt2 = review.talk!;
-          u_title = review.user_title!;
-          u_genre = review.user_genre!;
-          u_poster = review.user_poster!;
+            _selectedDate = review.time!;
+            rated = review.rate!;
+            txt1 = review.who!;
+            txt2 = review.talk!;
+            u_title = review.user_title!;
+            u_genre = review.user_genre!;
+            u_poster = review.user_poster!;
 
-          txtWho.text = review.who!;
-          txtWhat.text = review.talk!;
+            txtWho.text = review.who!;
+            txtWhat.text = review.talk!;
           }
-
-
           return Container(
             padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
             child: Column(children: [
@@ -191,26 +216,26 @@ class _EditScreenState extends State<EditScreen> {
                       style: OutlinedButton.styleFrom(
                           shape: RoundedRectangleBorder(
                             borderRadius:
-                                BorderRadius.all(Radius.circular(10.0)),
+                            BorderRadius.all(Radius.circular(10.0)),
                           ),
                           side: BorderSide(width: 1, color: Colors.grey)),
                       child: (ckdate)
                           ? Text(
-                              new DateFormat.yMMMd().format(
-                                  DateTime.parse(new_selectedDate.toString())),
-                              style: TextStyle(
-                                  color: Color(0xFFF5F5F1),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15),
-                            )
+                        new DateFormat.yMMMd().format(
+                            DateTime.parse(new_selectedDate.toString())),
+                        style: TextStyle(
+                            color: Color(0xFFF5F5F1),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15),
+                      )
                           : Text(
-                              new DateFormat.yMMMd().format(
-                                  DateTime.parse(review.time.toString())),
-                              style: TextStyle(
-                                  color: Color(0xFFF5F5F1),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15),
-                            ),
+                        new DateFormat.yMMMd().format(
+                            DateTime.parse(review.time.toString())),
+                        style: TextStyle(
+                            color: Color(0xFFF5F5F1),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15),
+                      ),
                       onPressed: () {
                         _presentDatePicker();
                       },
@@ -230,19 +255,19 @@ class _EditScreenState extends State<EditScreen> {
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius:
-                                BorderRadius.all(Radius.circular(10.0)),
+                            BorderRadius.all(Radius.circular(10.0)),
                             borderSide:
-                                BorderSide(width: 1, color: Color(0xFFF5F5F1)),
+                            BorderSide(width: 1, color: Color(0xFFF5F5F1)),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius:
-                                BorderRadius.all(Radius.circular(10.0)),
+                            BorderRadius.all(Radius.circular(10.0)),
                             borderSide:
-                                BorderSide(width: 1, color: Colors.grey),
+                            BorderSide(width: 1, color: Colors.grey),
                           ),
                           border: OutlineInputBorder(
                             borderRadius:
-                                BorderRadius.all(Radius.circular(10.0)),
+                            BorderRadius.all(Radius.circular(10.0)),
                           ),
                         ),
                         style: TextStyle(
@@ -296,8 +321,14 @@ class _EditScreenState extends State<EditScreen> {
     );
   }
 
+  /*
+  Future<void> deletereview(String? id) async {
+    DBHelper sd = DBHelper();
+    await sd.delete(id);
+  }
+
   void showAlertDialog(BuildContext context) async {
-    String result = await showDialog(
+     await showDialog(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext _context) {
@@ -311,9 +342,7 @@ class _EditScreenState extends State<EditScreen> {
                 Navigator.pop(_context, "예");
                 setState(() {
                   deletereview(widget.id);
-                //  Navigator.pop(context);
-                  Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
-                      builder: (BuildContext context) => MyRoom()), (route) => false);
+                  Navigator.of(context).pop();
                 });
               },
             ),
@@ -341,9 +370,6 @@ class _EditScreenState extends State<EditScreen> {
       talk: this.txt2,
       time: _selectedDate.toString(),
     );
-    sd.update(fido);
-
-    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(
-        builder: (BuildContext context) => MyRoom()), (route) => false);
-  }
+    Navigator.of(context).pop();
+  }*/
 }

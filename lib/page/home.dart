@@ -1,4 +1,6 @@
 import 'package:MovieReviewApp/contents/model_movie.dart';
+import 'package:MovieReviewApp/contents/model_review.dart';
+import 'package:MovieReviewApp/contents/review_provider.dart';
 import 'package:MovieReviewApp/page/searching.dart';
 import 'package:MovieReviewApp/widget/auth_service.dart';
 import 'package:MovieReviewApp/widget/bottom_bar.dart';
@@ -12,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'choosecategory.dart';
+import 'editreview.dart';
 import 'list.dart';
 import 'my.dart';
 
@@ -28,12 +31,13 @@ class _MainState extends State<Main> {
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme:
-            ThemeData(brightness: Brightness.dark, primaryColor: Colors.black),
-        home: DefaultTabController(
+       theme:ThemeData(brightness: Brightness.dark, primaryColor: Colors.black),
+       home: DefaultTabController(
           length: 4,
           child: SafeArea(
             child: Scaffold(
+                resizeToAvoidBottomInset: false,
+              backgroundColor: Color(0xFF1D1E21),
               body: TabBarView(
                 physics: ClampingScrollPhysics(),
                 children: [
@@ -117,41 +121,24 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     final loginprovider = Provider.of<AuthServices>(context);
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Color(0xFF1D1E21),
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text("Movier"),
+        title: Text("Movier",style: TextStyle(fontSize: 30),),
       ),
       body: Column(
         children: [
-          Expanded(
-            child: Container(
-              padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
-              //color: Colors.white,
-              child: Row(
-                children: [
-                  CircleAvatar(
-                      backgroundImage: AssetImage('images/rectangle.png'),
-                      radius: 35),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(FirebaseAuth.instance.currentUser!.email.toString() +
-                            " 님, 안녕하세요!",overflow: TextOverflow.visible,maxLines: null,),
-                          TextButton(onPressed: (){loginprovider.logout();}, child: Text("로그아웃"))
-                      ],
-                    ),
-                  )
-                ],
-              ),
+          Container(
+            padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+            child: Row(
+              children: [
+                Text(FirebaseAuth.instance.currentUser!.email.toString() +
+                    " 님, 안녕하세요!",overflow: TextOverflow.visible,maxLines: null,),
+                TextButton(onPressed: (){loginprovider.logout();}, child: Text("로그아웃"))
+              ],
             ),
           ),
-
           Container(
             padding: EdgeInsets.fromLTRB(10, 5, 5, 5),
             alignment: Alignment.bottomLeft,
@@ -174,7 +161,7 @@ class _HomeState extends State<Home> {
               ],
             ),
           ),
-          Expanded(
+          Flexible(
             child: Container(
               child: StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
@@ -193,7 +180,6 @@ class _HomeState extends State<Home> {
             ),
           ),
           SizedBox(height: 10,),
-
           Container(
             padding: EdgeInsets.fromLTRB(10, 5, 5, 5),
             alignment: Alignment.bottomLeft,
@@ -213,7 +199,7 @@ class _HomeState extends State<Home> {
               ],
             ),
           ),
-          Expanded(
+          Flexible(
             child: Container(
               //  color: Colors.white,
               child: StreamBuilder<QuerySnapshot>(
@@ -233,17 +219,24 @@ class _HomeState extends State<Home> {
             ),
           ),
           SizedBox(height: 10,),
-
           Container(
-            padding: EdgeInsets.all(15),
+            padding: EdgeInsets.fromLTRB(10, 5, 5, 5),
             alignment: Alignment.bottomLeft,
-            child: Text("최근 평가한 컨텐츠", style: TextStyle(fontSize: 20)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("최근 평가한 컨텐츠", style: TextStyle(fontSize: 20)),
+                IconButton(onPressed: (){
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context)=>MyRoom())
+                  );
+                }, icon: Icon(Icons.arrow_forward))
+              ],
+            ),
           ),
-          Expanded(
-              child: Container(
-            alignment: Alignment.center,
-            child: Text("평가한 컨텐츠가 없습니다 !"),
-          )),
+          Flexible(child: reviewBuilder(context)),
+          SizedBox(height: 10,),
+
         ],
       ),
     );
@@ -255,4 +248,62 @@ Widget _buildBody(BuildContext context, List<DocumentSnapshot> snapshot) {
   return Row(children: [
     CircleSlider(movies: movies),
   ]);
+}
+
+reviewBuilder(BuildContext parentContext) {
+  final review_manager = Provider.of<ReviewProvider>(parentContext);
+  return FutureBuilder(
+      future: review_manager.loadreview(),
+      builder: (context, snapshot) {
+        if (snapshot.data != null) {
+          if ((snapshot.data as List).length == 0) {
+            return Container(
+              alignment: Alignment.center,
+              child: Text("평가한 컨텐츠가 없습니다 !"),
+            );
+          }
+          return ListView.builder(
+            scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.symmetric(horizontal: 5),
+            itemCount: (snapshot.data as List).length,
+            itemBuilder: (context, index) {
+              Review review = (snapshot.data as List)[index];
+              return Row(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      //  print({review.rate});
+                      Navigator.push(
+                          parentContext,
+                          CupertinoPageRoute(
+                              builder: (context) =>
+                                  EditScreen(id: review.id)));
+                    },
+                    child:Container(
+                      padding: EdgeInsets.only(right: 10),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: CircleAvatar(
+                          backgroundImage: NetworkImage(review.user_poster.toString()),
+                          radius: 55,
+                        ),
+                      ),
+                    )
+                  ),
+                ],
+              );
+            },
+          );
+        }
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              CircularProgressIndicator(),
+              Text('Loading'),
+            ],
+          ),
+        );
+      });
 }

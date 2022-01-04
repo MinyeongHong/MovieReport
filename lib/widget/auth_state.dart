@@ -1,5 +1,5 @@
-import 'package:MovieReviewApp/page/login.dart';
-import 'package:MovieReviewApp/page/register.dart';
+import 'package:MovieReviewApp/page/auth_login.dart';
+import 'package:MovieReviewApp/page/auth_register.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

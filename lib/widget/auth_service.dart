@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:MovieReviewApp/page/login.dart';
-import 'package:MovieReviewApp/page/register.dart';
+import 'package:MovieReviewApp/page/auth_login.dart';
+import 'package:MovieReviewApp/page/auth_register.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +23,7 @@ class AuthServices with ChangeNotifier {
       if(user!=null) {
         await user.sendEmailVerification();
         setLoading(false);
+        logout();
         return user;
       }
     } on SocketException{
@@ -51,10 +52,17 @@ class AuthServices with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> sendPasswordResetEmail(String email) async {
+    await _firebaseAuth.setLanguageCode("ko");
+    return _firebaseAuth.sendPasswordResetEmail(email: email);
+  }
+
   Future logout() async{
     await _firebaseAuth.signOut();
-
   }
+
+
+
   void setLoading(val){
     _isLoading = val;
     notifyListeners();

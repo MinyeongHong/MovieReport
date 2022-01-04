@@ -27,22 +27,19 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext parentcontext) {
-    return Container(
-      color: Color(0xFF1D1E21),
-        child: Column(
-      children: [
-        Container(
-          color: Colors.black,
-          padding: EdgeInsets.fromLTRB(5, 10, 5, 10),
-          child: Row(
+    return Scaffold(
+        resizeToAvoidBottomInset: false,
+      backgroundColor: Color(0xFF1D1E21),
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          title:Row(
             children: [
               Expanded(
-                  flex: 6,
+                  //flex: 6,
                   child: TextField(
                     onChanged: (val) {
                       setState(() {
                         _searchText = val;
-                      //  print(_searchText);
                       });
                     },
                     focusNode: focusNode,
@@ -52,23 +49,23 @@ class _SearchScreenState extends State<SearchScreen> {
                     decoration: InputDecoration(
                       isDense: true,
                       filled: true,
-                      fillColor: Colors.white12,
+                      fillColor: Colors.black,
                       prefixIcon: Icon(
                         Icons.search,
                         color: Colors.white,
                       ),
                       suffixIcon: focusNode.hasFocus
                           ? IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  _filter.clear();
-                                  _searchText = "";
-                                });
-                              },
-                              icon: Icon(
-                                Icons.cancel,
-                                size: 20,color: Colors.grey,
-                              ))
+                          onPressed: () {
+                            setState(() {
+                              _filter.clear();
+                              _searchText = "";
+                            });
+                          },
+                          icon: Icon(
+                            Icons.cancel,
+                            size: 20,color: Colors.grey,
+                          ))
                           : Container(),
                       hintText: '작품명을 검색해주세요',
                       labelStyle: TextStyle(color: Colors.white),
@@ -83,28 +80,56 @@ class _SearchScreenState extends State<SearchScreen> {
                           borderSide: BorderSide(color: Colors.transparent)),
                     ),
                   )),
-              focusNode.hasFocus
-                  ? Expanded(
-                      child: TextButton(
-                      onPressed: () {
-                        setState(() {
-                          _filter.clear();
-                          _searchText = "";
-                          focusNode.unfocus();
-                        });
-                      },
-                      child: Text("취소",style: TextStyle(color: Colors.white),),
-                    ))
-                  : Expanded(flex: 0, child: Container())
+
             ],
           ),
         ),
-        Container(padding: EdgeInsets.fromLTRB(0, 4, 0, 2),child: Text("영화"),),
+        body: Column(
+      children: [
+        SizedBox(height: 10,),
+        Container(decoration:BoxDecoration(color: Color(0x20FFFFFF),borderRadius: BorderRadius.circular(5)),padding: EdgeInsets.fromLTRB(70, 2, 70, 2),child: Text("영화"),),
         Expanded(
-          child:Container(
-            child: StreamBuilder(
+          child:StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection("Netflix_Movie")
+                  .where("title", isGreaterThanOrEqualTo: _searchText).limit(4)
+                  .snapshots(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text("Something went wrong"),
+                  );
+                }
+                if (snapshot.connectionState == ConnectionState.waiting) { return Center(child: CircularProgressIndicator(color: Colors.white,));}
+                return ListView(
+                  children: snapshot.data!.docs.map((DocumentSnapshot document) {
+                    final movie = Movie.fromSnapshot(document);
+                    return Card(
+                      child: InkWell(
+                          child: ListTile(
+                            tileColor: Color(0xFF1D1E21),
+                            title: Text(movie.title),
+                            leading: Image.network(movie.poster),
+                          ),
+                          onTap: () {
+                            Navigator.of(context)
+                                .push(MaterialPageRoute<Null>(
+                                fullscreenDialog: true,
+                                builder: (BuildContext context) {
+                                  return DetailScreen(movie: movie);
+                                }));
+                          }),
+                    );
+                  }).toList(),
+                );
+              }),
+        ),
+        Container(decoration:BoxDecoration(color: Color(0x20FFFFFF),borderRadius: BorderRadius.circular(5)),padding: EdgeInsets.fromLTRB(50, 2, 50, 2),child: Text("TV 프로그램"),),
+        Expanded(
+              child:StreamBuilder(
                 stream: FirebaseFirestore.instance
-                    .collection("Netflix_Movie")
+                    .collection("Netflix_TV")
                     .where("title", isGreaterThanOrEqualTo: _searchText).limit(4)
                     .snapshots(),
                 builder: (BuildContext context,
@@ -121,61 +146,22 @@ class _SearchScreenState extends State<SearchScreen> {
                       return Card(
                         child: InkWell(
                             child: ListTile(
+                              tileColor: Color(0xFF1D1E21),
                               title: Text(movie.title),
                               leading: Image.network(movie.poster),
                             ),
                             onTap: () {
                               Navigator.of(context)
                                   .push(MaterialPageRoute<Null>(
-                                  fullscreenDialog: true,
-                                  builder: (BuildContext context) {
-                                    return DetailScreen(movie: movie);
-                                  }));
+                                      fullscreenDialog: true,
+                                      builder: (BuildContext context) {
+                                        return DetailScreen(movie: movie);
+                                      }));
                             }),
                       );
                     }).toList(),
                   );
                 }),
-          ),
-        ),
-        Container(padding: EdgeInsets.fromLTRB(0, 2, 0, 2),child: Text("TV 프로그램"),),
-        Expanded(
-              child:Container(
-                child: StreamBuilder(
-                  stream: FirebaseFirestore.instance
-                      .collection("Netflix_TV")
-                      .where("title", isGreaterThanOrEqualTo: _searchText).limit(4)
-                      .snapshots(),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<QuerySnapshot> snapshot) {
-                    if (snapshot.hasError) {
-                      return Center(
-                        child: Text("Something went wrong"),
-                      );
-                    }
-                    if (snapshot.connectionState == ConnectionState.waiting) { return Center(child: CircularProgressIndicator(color: Colors.white,));}
-                    return ListView(
-                      children: snapshot.data!.docs.map((DocumentSnapshot document) {
-                        final movie = Movie.fromSnapshot(document);
-                        return Card(
-                          child: InkWell(
-                              child: ListTile(
-                                title: Text(movie.title),
-                                leading: Image.network(movie.poster),
-                              ),
-                              onTap: () {
-                                Navigator.of(context)
-                                    .push(MaterialPageRoute<Null>(
-                                        fullscreenDialog: true,
-                                        builder: (BuildContext context) {
-                                          return DetailScreen(movie: movie);
-                                        }));
-                              }),
-                        );
-                      }).toList(),
-                    );
-                  }),
-              ),
         ),
 
       ],

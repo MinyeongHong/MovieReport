@@ -108,6 +108,7 @@ class _CategoryState extends State<Category> {
 
     return Scaffold(
       backgroundColor: Color(0xFF1D1E21),
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.black,
         title: Text("장르 별 컨텐츠 찾기"),
