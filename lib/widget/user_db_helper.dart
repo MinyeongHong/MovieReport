@@ -19,7 +19,7 @@ class DBHelper {
       join(await getDatabasesPath(), 'reviews.db'),
       onCreate: (db, version) {
         return db.execute(
-          "CREATE TABLE reviews(id TEXT, user_title TEXT,user_poster TEXT,user_genre TEXT,rate TEXT NOT NULL,talk TEXT DEFAULT 0, who TEXT DEFAULT 0 , time TEXT DEFAULT 0)",
+          "CREATE TABLE reviews(id TEXT, user_title TEXT,user_poster TEXT,user_genre TEXT,rate TEXT NOT NULL,talk TEXT DEFAULT 0, who TEXT DEFAULT 0 , time TEXT DEFAULT 0, create_time TEXT DEFAULT 0)",
         );
       },
       version: 1,
@@ -40,12 +40,16 @@ class DBHelper {
     );
   }
 
-  Future<List<Review>> reviews() async {
+  Future<List<Review>> reviews(int ver) async {
     final db = await database;
-
+    late List<Map<String, dynamic>> maps;
     // 모든 Memo를 얻기 위해 테이블에 질의합니다.
-    final List<Map<String, dynamic>> maps = await db.query('reviews');
-
+    if(ver==0) maps = await db.query('reviews',orderBy: 'create_time DESC'); //최신 등록순
+    else if(ver==1) maps = await db.query('reviews',orderBy: 'time DESC');
+    else if(ver==2) maps = await db.query('reviews',orderBy: 'user_title ASC'); //이름 순
+    else if(ver==3) maps = await db.query('reviews',orderBy: 'user_title DESC'); //이름 역순
+    else if(ver==4) maps = await db.query('reviews',orderBy: 'rate DESC'); //별점 순
+    else  maps = await db.query('reviews',orderBy: 'rate ASC'); // 별점 역순
     // List<Map<String, dynamic>를 List<Memo>으로 변환합니다.
     return List.generate(maps.length, (i) {
       return Review(
@@ -57,6 +61,7 @@ class DBHelper {
         talk: maps[i]['talk'],
         who: maps[i]['who'],
         time: maps[i]['time'],
+        create_time: maps[i]['create_time']
       );
     });
   }
@@ -88,6 +93,7 @@ class DBHelper {
     );
   }
 
+
   Future<List<Review>> findreview(String? id) async {
     final db = await database;
 
@@ -106,6 +112,7 @@ class DBHelper {
         talk: maps[i]['talk'],
         who: maps[i]['who'],
         time: maps[i]['time'],
+        create_time: maps[i]['create_time']
       );
     });
   }

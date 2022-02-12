@@ -1,7 +1,5 @@
 import 'package:MovieReviewApp/widget/auth_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:http/io_client.dart';
 import 'package:provider/src/provider.dart';
 
 class register extends StatefulWidget {
@@ -100,7 +98,10 @@ class _registerState extends State<register> {
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
-                        )),
+                        ),focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: Colors.white)
+                    ),),
                   ),
                   SizedBox(
                     height: 10,
@@ -125,7 +126,11 @@ class _registerState extends State<register> {
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
-                        )),
+                        ),focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: Colors.white)
+                    ),
+                    ),
                   ),
                   SizedBox(
                     height: 10,
@@ -154,7 +159,13 @@ class _registerState extends State<register> {
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
-                        )),
+                        ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(color: Colors.white)
+                    ),
+                    ),
+
                   ),
                   SizedBox(
                     height: 30,

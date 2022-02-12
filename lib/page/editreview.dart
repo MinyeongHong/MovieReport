@@ -1,12 +1,9 @@
-import 'dart:io';
+
 import 'package:MovieReviewApp/contents/review_provider.dart';
-import 'package:get/get.dart';
 import 'package:MovieReviewApp/contents/model_review.dart';
-import 'package:MovieReviewApp/page/my.dart';
 import 'package:MovieReviewApp/widget/user_db_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:MovieReviewApp/contents/model_movie.dart';
 import 'dart:ui';
 import 'package:intl/intl.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -25,11 +22,12 @@ class _EditScreenState extends State<EditScreen> {
 
   DateTime new_selectedDate = DateTime.now();
   late String _selectedDate;
+
   bool ckdate = false;
   bool rebuild=false;
   double new_rated = 0.0;
   String rated = '';
-
+  String create_time='';
   String txt1 = '';
   String txt2 = '';
 
@@ -117,6 +115,7 @@ class _EditScreenState extends State<EditScreen> {
                       who: this.txt1,
                       talk: this.txt2,
                       time: _selectedDate.toString(),
+                      create_time: this.create_time,
                     );
                     review_manager.editreview(fido);
                     Navigator.of(context).pop();
@@ -138,7 +137,6 @@ class _EditScreenState extends State<EditScreen> {
   LoadBuilder() {
     return FutureBuilder<List<Review>>(
       future: loadreview(widget.id),
-      //future: reviewlist,
       builder: (BuildContext context, AsyncSnapshot<List<Review>> snapshot) {
         if (snapshot.data!.isEmpty) {
           return Container(
@@ -150,6 +148,7 @@ class _EditScreenState extends State<EditScreen> {
           if(rebuild==false){
             rebuild=true;
             _selectedDate = review.time!;
+            create_time=review.create_time!;
             rated = review.rate!;
             txt1 = review.who!;
             txt2 = review.talk!;
@@ -159,6 +158,7 @@ class _EditScreenState extends State<EditScreen> {
 
             txtWho.text = review.who!;
             txtWhat.text = review.talk!;
+
           }
           return Container(
             padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
@@ -314,6 +314,7 @@ class _EditScreenState extends State<EditScreen> {
               SizedBox(
                 height: 20,
               ),
+              Text("최근 업데이트 일: "+review.create_time.toString().substring(0, 10),)
             ]),
           );
         }

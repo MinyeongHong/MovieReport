@@ -92,13 +92,13 @@ class _SearchScreenState extends State<SearchScreen> {
           child:StreamBuilder(
               stream: FirebaseFirestore.instance
                   .collection("Netflix_Movie")
-                  .where("title", isGreaterThanOrEqualTo: _searchText).limit(4)
+                  .where("title", isGreaterThanOrEqualTo: _searchText).limit(7)
                   .snapshots(),
               builder: (BuildContext context,
                   AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.hasError) {
                   return Center(
-                    child: Text("Something went wrong"),
+                    child: Text("오류가 발생했습니다. 다시 한 번 시도해 주세요!"),
                   );
                 }
                 if (snapshot.connectionState == ConnectionState.waiting) { return Center(child: CircularProgressIndicator(color: Colors.white,));}
@@ -130,13 +130,13 @@ class _SearchScreenState extends State<SearchScreen> {
               child:StreamBuilder(
                 stream: FirebaseFirestore.instance
                     .collection("Netflix_TV")
-                    .where("title", isGreaterThanOrEqualTo: _searchText).limit(4)
+                    .where("title", isGreaterThanOrEqualTo: _searchText,).limit(7)
                     .snapshots(),
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasError) {
                     return Center(
-                      child: Text("Something went wrong"),
+                      child: Text("오류가 발생했습니다. 다시 한 번 시도해 주세요!"),
                     );
                   }
                   if (snapshot.connectionState == ConnectionState.waiting) { return Center(child: CircularProgressIndicator(color: Colors.white,));}

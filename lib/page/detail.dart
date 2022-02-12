@@ -1,7 +1,6 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:MovieReviewApp/contents/model_movie.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'dart:ui';
 import 'writereview.dart';
 
@@ -13,6 +12,34 @@ class DetailScreen extends StatefulWidget {
 
 class _DetailScreenState extends State<DetailScreen> {
   bool review=false;
+  BannerAd? _banner;
+  bool _loadingBanner = false;
+  Future<void> _creatBanner(BuildContext context) async{
+    final AnchoredAdaptiveBannerAdSize? size =
+    await AdSize.getAnchoredAdaptiveBannerAdSize(Orientation.portrait, MediaQuery.of(context).size.width.truncate());
+    if(size==null) {return;}
+    final BannerAd banner = BannerAd(
+      size:size,
+      request: AdRequest(),
+      adUnitId:BannerAd.testAdUnitId,
+      listener: BannerAdListener(
+        onAdLoaded :(Ad ad){
+          print('$BannerAd loaded.');
+          setState((){
+            _banner = ad as BannerAd?;
+          });
+        },
+        onAdFailedToLoad: (Ad ad, LoadAdError error){
+          print('$BannerAd failedToLoad: $error');
+          ad.dispose();
+        },
+        onAdOpened: (Ad ad) => print('$BannerAd onAdOpened.'),
+        onAdClosed: (Ad ad) => print('$BannerAd onAdClosed.'),
+      ),
+    );
+    return banner.load();
+  }
+
 
   @override
   void initState() {
@@ -21,8 +48,17 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  void dispose() {
+    super.dispose();
+    _banner?.dispose();
+  }
 
+  @override
+  Widget build(BuildContext context) {
+    if(!_loadingBanner){
+      _loadingBanner = true;
+      _creatBanner(context);
+    }
     return Scaffold(
       body:SingleChildScrollView(
         child: Container(
@@ -46,6 +82,12 @@ class _DetailScreenState extends State<DetailScreen> {
                       child: Column(
                         children: [
                           SizedBox(height: 20,),
+                          if(_banner!=null) Container(
+                            width: _banner!.size.width.toDouble(),
+                            height: _banner!.size.height.toDouble(),
+                            child: AdWidget(ad:_banner!),
+                          ),
+                          SizedBox(height: 20,),
                           Container(
                             padding: EdgeInsets.fromLTRB(0, 45, 0, 10),
                             child: Image.network(widget.movie.poster),
@@ -67,7 +109,7 @@ class _DetailScreenState extends State<DetailScreen> {
                             SingleChildScrollView(
                               child: Container(
                                 margin: EdgeInsets.only(top: 1),
-                                padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
+                                padding: EdgeInsets.fromLTRB(15, 15, 15, 35),
                                 alignment: Alignment.center,
                                 child:  Text(widget.movie.description,
                                   style:TextStyle(color: Color(0xFFF5F5F1)),
@@ -100,7 +142,6 @@ class _DetailScreenState extends State<DetailScreen> {
           ));
         },
         label: const Text('평가하기',style: TextStyle(fontSize:17,fontWeight: FontWeight.bold,color: Colors.white)),
-       // icon: const Icon(Icons.thumb_up,color: Colors.white,),
         backgroundColor: Color(0xFFC92A2A),
         shape: StadiumBorder(),
         extendedPadding: EdgeInsets.fromLTRB(20, 30, 20, 30),

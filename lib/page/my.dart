@@ -1,15 +1,10 @@
 import 'dart:ui';
-
 import 'package:MovieReviewApp/contents/review_provider.dart';
 import 'package:MovieReviewApp/page/editreview.dart';
-import 'package:MovieReviewApp/page/writereview.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:MovieReviewApp/contents/model_review.dart';
 import 'package:MovieReviewApp/widget/user_db_helper.dart';
-import 'package:MovieReviewApp/page/auth_login.dart';
-import 'package:MovieReviewApp/contents/model_movie.dart';
-import 'package:MovieReviewApp/widget/box_slider.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -18,15 +13,15 @@ import 'package:provider/provider.dart';
 
 class MyRoom extends StatefulWidget {
   const MyRoom({Key? key}) : super(key: key);
-
-
   @override
   _MyRoomState createState() => _MyRoomState();
 }
 
 class _MyRoomState extends State<MyRoom> {
   int num = 0;
-
+  int now_review_sort=0;
+  List <String> sort_review=["최근 등록 순으로 보기","최근 시청일 순으로 보기","이름 순으로 보기","이름 역 순으로 보기","별점 높은 순으로 보기","별점 낮은 순으로 보기"];
+  String review_title="최근 등록 순으로 보기";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,32 +36,82 @@ class _MyRoomState extends State<MyRoom> {
           SizedBox(
             height: 10,
           ),
-          Container(
-            child: TextButton(
-              child: Text("최신순으로 보기"),
-              onPressed: () {
-              },
-            ),
+          ExpansionTile(
+            key: GlobalKey(),
+            title: new Text(this.review_title),
+            trailing: Icon(Icons.arrow_drop_down),
+            children: [
+              if (now_review_sort != 0)
+                new ListTile(
+                  title: Text(sort_review[0]),
+                  onTap: () {
+                    setState(() {
+                      this.now_review_sort = 0;
+                      this.review_title = sort_review[now_review_sort];
+                    });
+                  },
+                ),
+              if (now_review_sort != 1)
+                new ListTile(
+                  title: Text(sort_review[1]),
+                  onTap: () {
+                    setState(() {
+                      this.now_review_sort = 1;
+                      this.review_title = sort_review[now_review_sort];
+                    });
+                  },
+                ),
+              if (now_review_sort != 2)
+                new ListTile(
+                  title: Text(sort_review[2]),
+                  onTap: () {
+                    setState(() {
+                      this.now_review_sort = 2;
+                      this.review_title = sort_review[now_review_sort];
+                    });
+                  },
+                ),
+              if (now_review_sort != 3)
+                new ListTile(
+                  title: Text(sort_review[3]),
+                  onTap: () {
+                    setState(() {
+                      this.now_review_sort = 3;
+                      this.review_title = sort_review[now_review_sort];
+                    });
+                  },
+                ),
+              if (now_review_sort != 4)
+                new ListTile(
+                  title: Text(sort_review[4]),
+                  onTap: () {
+                    setState(() {
+                      this.now_review_sort = 4;
+                      this.review_title = sort_review[now_review_sort];
+                    });
+                  },
+                ),
+            ],
           ),
-          Expanded(
-            child: reviewBuilder(context),
-          )
+              Expanded(
+                child: reviewBuilder(context,now_review_sort),
+              )
+
         ],
       ),
     );
   }
 
-  Future<List<Review>> loadreview() async {
+  Future<List<Review>> loadreview(int ver) async {
     DBHelper sd = DBHelper();
-    return await sd.reviews();
+    return await sd.reviews(ver);
 
   }
 
-  reviewBuilder(BuildContext parentContext) {
+  reviewBuilder(BuildContext parentContext,int sort_ver) {
     final review_manager = Provider.of<ReviewProvider>(parentContext);
     return FutureBuilder(
-      future: review_manager.loadreview(),
-        //future: reviewlist,
+      future: review_manager.loadreview(now_review_sort),
         builder: (context, snapshot) {
           if (snapshot.data != null) {
             if ((snapshot.data as List).length == 0) {
@@ -226,6 +271,20 @@ class _MyRoomState extends State<MyRoom> {
             ),
           );
         });
+
+  }
+
+
+
+  void _filterList(value) {
+    switch(value){
+      case 1:{
+        setState(() {
+          //filteredList = list.where((text) => text.fileName.toLowerCase().contains(value.toLowerCase())).toList();
+        });
+      }
+    }
+
   }
 
 }

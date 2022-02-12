@@ -3,16 +3,13 @@ import 'package:MovieReviewApp/contents/model_review.dart';
 import 'package:MovieReviewApp/contents/review_provider.dart';
 import 'package:MovieReviewApp/page/searching.dart';
 import 'package:MovieReviewApp/widget/auth_service.dart';
-import 'package:MovieReviewApp/widget/bottom_bar.dart';
-import 'package:MovieReviewApp/widget/box_slider.dart';
-import 'package:MovieReviewApp/widget/carousel_slider.dart';
 import 'package:MovieReviewApp/widget/circle_silder.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'choosecategory.dart';
 import 'editreview.dart';
 import 'list.dart';
@@ -26,26 +23,26 @@ class Main extends StatefulWidget {
 }
 
 class _MainState extends State<Main> {
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-       theme:ThemeData(brightness: Brightness.dark, primaryColor: Colors.black),
-       home: DefaultTabController(
+   return DefaultTabController(
           length: 4,
           child: SafeArea(
             child: Scaffold(
                 resizeToAvoidBottomInset: false,
               backgroundColor: Color(0xFF1D1E21),
-              body: TabBarView(
-                physics: ClampingScrollPhysics(),
-                children: [
-                  Home(),
-                  SearchScreen(),
-                  Category(),
-                  MyRoom(),
-                ],
+              body: Stack(
+                children:[
+
+                TabBarView(
+                  physics: ClampingScrollPhysics(),
+                  children: [
+                    Home(),
+                    SearchScreen(),
+                    Category(),
+                    MyRoom(),
+                  ],
+                ),]
               ),
               bottomNavigationBar: Container(
                 color: Colors.black,
@@ -104,7 +101,7 @@ class _MainState extends State<Main> {
               ),
             ),
           ),
-        ));
+        );
   }
 }
 
@@ -125,7 +122,7 @@ class _HomeState extends State<Home> {
       backgroundColor: Color(0xFF1D1E21),
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text("Movier",style: TextStyle(fontSize: 30),),
+        title: Text("Movier",style: TextStyle(fontSize: 30,),),
       ),
       body: Column(
         children: [
@@ -253,7 +250,7 @@ Widget _buildBody(BuildContext context, List<DocumentSnapshot> snapshot) {
 reviewBuilder(BuildContext parentContext) {
   final review_manager = Provider.of<ReviewProvider>(parentContext);
   return FutureBuilder(
-      future: review_manager.loadreview(),
+      future: review_manager.loadreview(0),
       builder: (context, snapshot) {
         if (snapshot.data != null) {
           if ((snapshot.data as List).length == 0) {
@@ -307,3 +304,4 @@ reviewBuilder(BuildContext parentContext) {
         );
       });
 }
+

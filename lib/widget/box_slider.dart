@@ -1,4 +1,3 @@
-//import 'dart:ui';
 
 import 'package:MovieReviewApp/page/detail.dart';
 import 'package:flutter/cupertino.dart';
@@ -29,6 +28,7 @@ class BoxSlider extends StatelessWidget {
                 Column(
                     children: [
                       Image.network(movies[i].poster),
+                      SizedBox(height: 2,),
                       Expanded(child:
                       Text(movies[i].title.toString(),maxLines: 1,overflow: TextOverflow.ellipsis,)
                       ),

@@ -1,14 +1,12 @@
-import 'dart:io';
-
 import 'package:MovieReviewApp/contents/model_review.dart';
 import 'package:MovieReviewApp/widget/user_db_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:MovieReviewApp/contents/model_movie.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'dart:ui';
 import 'package:intl/intl.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:crypto/crypto.dart';
 import 'dart:convert';
 
@@ -23,6 +21,7 @@ class ReviewScreen extends StatefulWidget {
 }
 
 class _ReviewScreenState extends State<ReviewScreen> {
+  InterstitialAd? _interstitialAd;
   final TextEditingController _withController = TextEditingController();
   final TextEditingController _reviewController = TextEditingController();
   DateTime _selectedDate=DateTime.now();
@@ -33,6 +32,50 @@ class _ReviewScreenState extends State<ReviewScreen> {
   String u_title='';
   String u_poster='';
   String u_genre='';
+  String create_time='';
+
+    @override
+    void initState() {
+      super.initState();
+      _createInterstitialAd();
+    }
+
+  void _createInterstitialAd(){
+    InterstitialAd.load(
+        adUnitId:InterstitialAd.testAdUnitId,
+        request:AdRequest(),
+        adLoadCallback:InterstitialAdLoadCallback(
+          onAdLoaded: (InterstitialAd ad){
+            print('$ad loaded');
+            _interstitialAd=ad;
+
+          },
+          onAdFailedToLoad: (LoadAdError error){
+            print('InerstitialAd failed to load: $error.');
+            _interstitialAd = null;
+          },
+        ));
+  }
+  void _showInterstitialAd(){
+      if(_interstitialAd==null){return;}
+      _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+        onAdShowedFullScreenContent: (InterstitialAd ad) => print('ad onAdshowFullScreenContent.'),
+        onAdDismissedFullScreenContent: (InterstitialAd ad){
+          print('$ad onAdDismissFullScreenContent.');
+          ad.dispose();
+          _createInterstitialAd();
+        },
+        onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error){
+          print('$ad onAdFailedToShowFullScreenContent: $error');
+          ad.dispose();
+          _createInterstitialAd();
+        },
+      );
+      _interstitialAd!.show();
+      _interstitialAd=null;
+  }
+
+
 
   void _presentDatePicker() {
     showDatePicker(
@@ -65,7 +108,6 @@ class _ReviewScreenState extends State<ReviewScreen> {
         ),
         body:SingleChildScrollView(
           child:Container(
-
             alignment: Alignment.center,
             padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
             child:Column(
@@ -170,6 +212,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                       style: TextStyle(fontSize:17,fontWeight: FontWeight.bold,color: Color(0xFFF5F5F1))),
                       onPressed:(){
                         saveDB();
+                        _showInterstitialAd();
                         },
                   )
                 ]
@@ -193,6 +236,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
         who: this.txt1,
         talk: this.txt2,
         time: _selectedDate.toString(),
+        create_time: DateTime.now().toString(),
       );
       await sd.insert(fido);
     }
