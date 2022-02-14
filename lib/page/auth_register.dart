@@ -89,19 +89,20 @@ class _registerState extends State<register> {
                         return null;
                     },
                     decoration: InputDecoration(
-                        fillColor: Color(0x50FFFFFF),
-                        hintText: "이메일을 입력하세요",
-                        hintStyle: TextStyle(color: Colors.white),
-                        prefixIcon: Icon(
-                          Icons.mail,
-                          color: Colors.white,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),focusedBorder: OutlineInputBorder(
+                      fillColor: Color(0x50FFFFFF),
+                      hintText: "이메일을 입력하세요",
+                      hintStyle: TextStyle(color: Colors.white),
+                      prefixIcon: Icon(
+                        Icons.mail,
+                        color: Colors.white,
+                      ),
+                      border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(color: Colors.white)
-                    ),),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: Colors.white)),
+                    ),
                   ),
                   SizedBox(
                     height: 10,
@@ -117,19 +118,19 @@ class _registerState extends State<register> {
                     },
                     obscureText: true,
                     decoration: InputDecoration(
-                        fillColor: Color(0x50FFFFFF),
-                        hintText: "비밀번호를 입력하세요",
-                        hintStyle: TextStyle(color: Colors.white),
-                        prefixIcon: Icon(
-                          Icons.vpn_key_outlined,
-                          color: Colors.white,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),focusedBorder: OutlineInputBorder(
+                      fillColor: Color(0x50FFFFFF),
+                      hintText: "비밀번호를 입력하세요",
+                      hintStyle: TextStyle(color: Colors.white),
+                      prefixIcon: Icon(
+                        Icons.vpn_key_outlined,
+                        color: Colors.white,
+                      ),
+                      border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(color: Colors.white)
-                    ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: Colors.white)),
                     ),
                   ),
                   SizedBox(
@@ -139,33 +140,33 @@ class _registerState extends State<register> {
                     style: TextStyle(color: Colors.white),
                     controller: _passwordController2,
                     validator: (String? value) {
-                      if (value != null){
-                         if( _passwordController.text != _passwordController2.text) {
-                        print(_passwordController.text);
-                        print(_passwordController2.text);
-                        return "비밀번호가 일치하지 않습니다";
-                      }else return null;
+                      if (value != null) {
+                        if (_passwordController.text !=
+                            _passwordController2.text) {
+                          print(_passwordController.text);
+                          print(_passwordController2.text);
+                          return "비밀번호가 일치하지 않습니다";
+                        } else
+                          return null;
                       }
                       return null;
                     },
                     obscureText: true,
                     decoration: InputDecoration(
-                        fillColor: Color(0x50FFFFFF),
-                        hintText: "비밀번호를 재입력하세요",
-                        hintStyle: TextStyle(color: Colors.white),
-                        prefixIcon: Icon(
-                          Icons.vpn_key,
-                          color: Colors.white,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      focusedBorder: OutlineInputBorder(
+                      fillColor: Color(0x50FFFFFF),
+                      hintText: "비밀번호를 재입력하세요",
+                      hintStyle: TextStyle(color: Colors.white),
+                      prefixIcon: Icon(
+                        Icons.vpn_key,
+                        color: Colors.white,
+                      ),
+                      border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(color: Colors.white)
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: Colors.white)),
                     ),
-                    ),
-
                   ),
                   SizedBox(
                     height: 30,
@@ -173,14 +174,15 @@ class _registerState extends State<register> {
                   MaterialButton(
                     onPressed: () async {
                       if (_formkey.currentState!.validate()) {
-                        if(_passwordController.text == _passwordController2.text) {
+                        if (_passwordController.text ==
+                            _passwordController2.text) {
                           await loginprovider.register(
                               _emailController.text.trim(),
                               _passwordController.text.trim());
                           widget.toggleScreen();
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content:
-                                const Text("가입이 완료되었습니다. 이메일 인증 완료 후 이용가능합니다"),
+                                const Text("가입이 완료되었습니다. 이메일 인증 완료 후 이용가능합니다."),
                           ));
                         }
                       }
@@ -192,7 +194,10 @@ class _registerState extends State<register> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15)),
                     child: loginprovider.isLoading
-                        ? Center(child: CircularProgressIndicator(color: Colors.white,))
+                        ? Center(
+                            child: CircularProgressIndicator(
+                            color: Colors.white,
+                          ))
                         : Text(
                             "가입하기",
                             style: TextStyle(

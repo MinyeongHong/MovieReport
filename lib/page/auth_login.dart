@@ -146,8 +146,8 @@ class _LoginState extends State<Login> {
                           MaterialButton(
                             onPressed: () async {
                               if(_formkey.currentState!.validate()){
-                                print("Email: ${_emailController.text}");
-                                print("Password: ${_passwordController.text}");
+                                //print("Email: ${_emailController.text}");
+                                //print("Password: ${_passwordController.text}");
                                 await loginprovider.login(_emailController.text.trim(),_passwordController.text.trim());
                                 if(FirebaseAuth.instance.currentUser!=null){
                                   if(FirebaseAuth.instance.currentUser!.emailVerified==true){print("로그인 성공");}
@@ -168,7 +168,6 @@ class _LoginState extends State<Login> {
                                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                     content: const Text("로그인에 실패하였습니다. \n이메일과 비밀번호를 다시한번 확인해주세요",style: TextStyle(color: Colors.white),),
                                     backgroundColor: Colors.black,
-
                                   ));
                                 }
 

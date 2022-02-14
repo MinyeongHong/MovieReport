@@ -9,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'choosecategory.dart';
 import 'editreview.dart';
@@ -123,19 +124,104 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         title: Text("Movier",style: TextStyle(fontSize: 30,),),
+        actions: [Builder(
+          builder: (context) => IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () => Scaffold.of(context).openEndDrawer(),
+            tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+          ),
+        ),],
+      ),
+      endDrawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            Padding(
+              padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
+              child:Text(FirebaseAuth.instance.currentUser!.email.toString(),
+                overflow: TextOverflow.visible,
+                maxLines: null,
+                style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16, height: 1.5),
+              ),
+            ),
+            Divider(thickness: 0.3,color: Colors.grey,),
+            ListTile(
+              title: const Text('문의하기'),
+              onTap: () async {
+                  final url =
+                      "https://docs.google.com/forms/d/e/1FAIpQLScdALR96Lobzyr_Mywma-0xon5FUHRwje-cLMxOYTYOU1Tn5A/viewform?usp=pp_url";
+                  if (await canLaunch(url)) {
+                await launch(
+                url,
+                forceWebView: true,
+                enableJavaScript: true,
+                );
+                }
+              },
+            ),
+            ListTile(
+              title: const Text('로그아웃'),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  barrierDismissible: false, // user must tap button!
+                  builder: (BuildContext alert_context) {
+                    return AlertDialog(
+                      content: Text("정말 로그아웃 하시겠습니까?"),
+                      actions: <Widget>[
+                        TextButton(
+                          child: Text('예',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
+                          onPressed: () {
+                            loginprovider.logout();
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        TextButton(
+                          child: Text('아니오',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
+                          onPressed: () {
+                            Navigator.pop(alert_context, "아니오");
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+            ListTile(
+              title: const Text('회원 탈퇴'),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  barrierDismissible: false, // user must tap button!
+                  builder: (BuildContext alert_context) {
+                    return AlertDialog(
+                      content: Text("정말 탈퇴 하시겠습니까?"),
+                      actions: <Widget>[
+                        TextButton(
+                          child: Text('예',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
+                          onPressed: () {
+                            loginprovider.removeAccount();
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        TextButton(
+                          child: Text('아니오',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
+                          onPressed: () {
+                            Navigator.pop(alert_context, "아니오");
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+          ],
+        ),
       ),
       body: Column(
         children: [
-          Container(
-            padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
-            child: Row(
-              children: [
-                Text(FirebaseAuth.instance.currentUser!.email.toString() +
-                    " 님, 안녕하세요!",overflow: TextOverflow.visible,maxLines: null,),
-                TextButton(onPressed: (){loginprovider.logout();}, child: Text("로그아웃"))
-              ],
-            ),
-          ),
           Container(
             padding: EdgeInsets.fromLTRB(10, 5, 5, 5),
             alignment: Alignment.bottomLeft,

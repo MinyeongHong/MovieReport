@@ -13,8 +13,6 @@ class AuthServices with ChangeNotifier {
   String get errorMessage => _errorMessage;
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  //AuthServices(this._firebaseAuth);
-
   Future register(String email,String password) async {
     setLoading(true);
     try{
@@ -59,6 +57,16 @@ class AuthServices with ChangeNotifier {
 
   Future logout() async{
     await _firebaseAuth.signOut();
+  }
+
+  Future removeAccount() async{
+    try {
+      await _firebaseAuth.currentUser!.delete();
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        print('오류가 발생하였습니다. 다시 로그인 후 시도해주세요');
+      }
+    }
   }
 
 

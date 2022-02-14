@@ -1,4 +1,3 @@
-
 import 'package:MovieReviewApp/contents/review_provider.dart';
 import 'package:MovieReviewApp/contents/model_review.dart';
 import 'package:MovieReviewApp/widget/user_db_helper.dart';
@@ -19,15 +18,14 @@ class EditScreen extends StatefulWidget {
 }
 
 class _EditScreenState extends State<EditScreen> {
-
   DateTime new_selectedDate = DateTime.now();
   late String _selectedDate;
 
   bool ckdate = false;
-  bool rebuild=false;
+  bool rebuild = false;
   double new_rated = 0.0;
   String rated = '';
-  String create_time='';
+  String create_time = '';
   String txt1 = '';
   String txt2 = '';
 
@@ -55,11 +53,14 @@ class _EditScreenState extends State<EditScreen> {
       });
     });
   }
+
   @override
   Widget build(BuildContext context) {
     final review_manager = Provider.of<ReviewProvider>(context);
     return GestureDetector(
-      onTap: (){ FocusScope.of(context).unfocus();},
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
       child: Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.black,
@@ -71,34 +72,33 @@ class _EditScreenState extends State<EditScreen> {
                   fontWeight: FontWeight.bold),
             ),
             actions: [
-
               IconButton(
-                  onPressed: ()  {
+                  onPressed: () {
                     showDialog(
-                        context: context,
-                        barrierDismissible: false, // user must tap button!
-                        builder: (BuildContext alert_context) {
-                      return AlertDialog(
-                        title: Text('리뷰 삭제'),
-                        content: Text("삭제하시겠습니까?"),
-                        actions: <Widget>[
-                          TextButton(
-                            child: Text('예'),
-                            onPressed: () {
-                              Navigator.pop(alert_context, "예");
-                              review_manager.deletereview(widget.id);
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                          TextButton(
-                            child: Text('아니오'),
-                            onPressed: () {
-                              Navigator.pop(alert_context, "아니오");
-                            },
-                          ),
-                        ],
-                      );
-                    },
+                      context: context,
+                      barrierDismissible: false, // user must tap button!
+                      builder: (BuildContext alert_context) {
+                        return AlertDialog(
+                          title: Text('리뷰 삭제'),
+                          content: Text("삭제하시겠습니까?"),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text('예'),
+                              onPressed: () {
+                                Navigator.pop(alert_context, "예");
+                                review_manager.deletereview(widget.id);
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                            TextButton(
+                              child: Text('아니오'),
+                              onPressed: () {
+                                Navigator.pop(alert_context, "아니오");
+                              },
+                            ),
+                          ],
+                        );
+                      },
                     );
                   },
                   icon: Icon(Icons.delete)),
@@ -134,6 +134,7 @@ class _EditScreenState extends State<EditScreen> {
     DBHelper sd = DBHelper();
     return await sd.findreview(id);
   }
+
   LoadBuilder() {
     return FutureBuilder<List<Review>>(
       future: loadreview(widget.id),
@@ -144,11 +145,10 @@ class _EditScreenState extends State<EditScreen> {
           );
         } else {
           Review review = snapshot.data![0];
-
-          if(rebuild==false){
-            rebuild=true;
+          if (rebuild == false) {
+            rebuild = true;
             _selectedDate = review.time!;
-            create_time=review.create_time!;
+            create_time = review.create_time!;
             rated = review.rate!;
             txt1 = review.who!;
             txt2 = review.talk!;
@@ -158,7 +158,6 @@ class _EditScreenState extends State<EditScreen> {
 
             txtWho.text = review.who!;
             txtWhat.text = review.talk!;
-
           }
           return Container(
             padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
@@ -216,26 +215,26 @@ class _EditScreenState extends State<EditScreen> {
                       style: OutlinedButton.styleFrom(
                           shape: RoundedRectangleBorder(
                             borderRadius:
-                            BorderRadius.all(Radius.circular(10.0)),
+                                BorderRadius.all(Radius.circular(10.0)),
                           ),
                           side: BorderSide(width: 1, color: Colors.grey)),
                       child: (ckdate)
                           ? Text(
-                        new DateFormat.yMMMd().format(
-                            DateTime.parse(new_selectedDate.toString())),
-                        style: TextStyle(
-                            color: Color(0xFFF5F5F1),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15),
-                      )
+                              new DateFormat.yMMMd().format(
+                                  DateTime.parse(new_selectedDate.toString())),
+                              style: TextStyle(
+                                  color: Color(0xFFF5F5F1),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15),
+                            )
                           : Text(
-                        new DateFormat.yMMMd().format(
-                            DateTime.parse(review.time.toString())),
-                        style: TextStyle(
-                            color: Color(0xFFF5F5F1),
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15),
-                      ),
+                              new DateFormat.yMMMd().format(
+                                  DateTime.parse(review.time.toString())),
+                              style: TextStyle(
+                                  color: Color(0xFFF5F5F1),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15),
+                            ),
                       onPressed: () {
                         _presentDatePicker();
                       },
@@ -244,7 +243,6 @@ class _EditScreenState extends State<EditScreen> {
                       flex: 1,
                       child: TextFormField(
                         controller: txtWho,
-                        //  initialValue: review.who,
                         maxLines: 1,
                         decoration: InputDecoration(
                           contentPadding: EdgeInsets.symmetric(horizontal: 16),
@@ -255,19 +253,19 @@ class _EditScreenState extends State<EditScreen> {
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius:
-                            BorderRadius.all(Radius.circular(10.0)),
+                                BorderRadius.all(Radius.circular(10.0)),
                             borderSide:
-                            BorderSide(width: 1, color: Color(0xFFF5F5F1)),
+                                BorderSide(width: 1, color: Color(0xFFF5F5F1)),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius:
-                            BorderRadius.all(Radius.circular(10.0)),
+                                BorderRadius.all(Radius.circular(10.0)),
                             borderSide:
-                            BorderSide(width: 1, color: Colors.grey),
+                                BorderSide(width: 1, color: Colors.grey),
                           ),
                           border: OutlineInputBorder(
                             borderRadius:
-                            BorderRadius.all(Radius.circular(10.0)),
+                                BorderRadius.all(Radius.circular(10.0)),
                           ),
                         ),
                         style: TextStyle(
@@ -275,7 +273,6 @@ class _EditScreenState extends State<EditScreen> {
                             fontWeight: FontWeight.bold,
                             fontSize: 15),
                         onChanged: (String txt1) {
-
                           this.txt1 = txt1;
                         },
                       ),
@@ -314,7 +311,9 @@ class _EditScreenState extends State<EditScreen> {
               SizedBox(
                 height: 20,
               ),
-              Text("최근 업데이트 일: "+review.create_time.toString().substring(0, 10),)
+              Text(
+                "최근 업데이트 일: " + review.create_time.toString().substring(0, 10),
+              )
             ]),
           );
         }
@@ -322,55 +321,4 @@ class _EditScreenState extends State<EditScreen> {
     );
   }
 
-  /*
-  Future<void> deletereview(String? id) async {
-    DBHelper sd = DBHelper();
-    await sd.delete(id);
-  }
-
-  void showAlertDialog(BuildContext context) async {
-     await showDialog(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext _context) {
-        return AlertDialog(
-          title: Text('리뷰 삭제'),
-          content: Text("삭제하시겠습니까?"),
-          actions: <Widget>[
-            TextButton(
-              child: Text('예'),
-              onPressed: () {
-                Navigator.pop(_context, "예");
-                setState(() {
-                  deletereview(widget.id);
-                  Navigator.of(context).pop();
-                });
-              },
-            ),
-            TextButton(
-              child: Text('아니오'),
-              onPressed: () {
-                Navigator.pop(_context, "아니오");
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void updateDB() {
-    DBHelper sd = DBHelper();
-    var fido = Review(
-      id: widget.id,
-      user_title: this.u_title,
-      user_poster: this.u_poster,
-      user_genre: this.u_genre,
-      rate: rated.toString(),
-      who: this.txt1,
-      talk: this.txt2,
-      time: _selectedDate.toString(),
-    );
-    Navigator.of(context).pop();
-  }*/
 }

@@ -124,10 +124,7 @@ class _DetailScreenState extends State<DetailScreen> {
                 ),
 
               ),
-              Positioned(child: AppBar(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-              )),
+
             ],
           ),
         ),
@@ -141,7 +138,7 @@ class _DetailScreenState extends State<DetailScreen> {
               }
           ));
         },
-        label: const Text('평가하기',style: TextStyle(fontSize:17,fontWeight: FontWeight.bold,color: Colors.white)),
+        label: const Text('평가하기',style: TextStyle(fontSize:17,fontWeight: FontWeight.normal,color: Colors.white)),
         backgroundColor: Color(0xFFC92A2A),
         shape: StadiumBorder(),
         extendedPadding: EdgeInsets.fromLTRB(20, 30, 20, 30),
