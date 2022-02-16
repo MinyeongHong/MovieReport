@@ -1,8 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'auth_state.dart';
-
 class WaitingVerified extends StatelessWidget {
   const WaitingVerified({Key? key}) : super(key: key);
 

@@ -4,9 +4,7 @@ import 'package:MovieReviewApp/widget/auth_wrapper.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 // 진빨강 Color(0xFF831010), 흰색 텍스트 Color(0xFFF5F5F1), 검정 Color(0xFF221F1F),
 // 빨강 Color(0xFFE50914),
 

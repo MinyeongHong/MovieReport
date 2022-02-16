@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.MovieReviewApp">
+    package="com.oyoung.Movier">
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
    <application
         android:label="무비어"
@@ -38,8 +38,5 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-       <meta-data
-           android:name="com.google.android.gms.ads.APPLICATION_ID"
-           android:value="ca-app-pub-2946000289930638~5563705331"/>
     </application>
 </manifest>

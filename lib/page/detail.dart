@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:MovieReviewApp/contents/model_movie.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'dart:ui';
 import 'writereview.dart';
 
@@ -12,6 +11,7 @@ class DetailScreen extends StatefulWidget {
 
 class _DetailScreenState extends State<DetailScreen> {
   bool review=false;
+  /*
   BannerAd? _banner;
   bool _loadingBanner = false;
   Future<void> _creatBanner(BuildContext context) async{
@@ -40,25 +40,27 @@ class _DetailScreenState extends State<DetailScreen> {
     return banner.load();
   }
 
-
+  @override
+  void dispose() {
+    super.dispose();
+    _banner?.dispose();
+  }
+*/
   @override
   void initState() {
     super.initState();
     review = widget.movie.review;
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    _banner?.dispose();
-  }
+
 
   @override
   Widget build(BuildContext context) {
+    /*
     if(!_loadingBanner){
       _loadingBanner = true;
       _creatBanner(context);
-    }
+    }*/
     return Scaffold(
       body:SingleChildScrollView(
         child: Container(
@@ -81,12 +83,13 @@ class _DetailScreenState extends State<DetailScreen> {
                       color: Colors.black.withOpacity(0.4),
                       child: Column(
                         children: [
+                          /*
                           SizedBox(height: 20,),
                           if(_banner!=null) Container(
                             width: _banner!.size.width.toDouble(),
                             height: _banner!.size.height.toDouble(),
                             child: AdWidget(ad:_banner!),
-                          ),
+                          ),*/
                           SizedBox(height: 20,),
                           Container(
                             padding: EdgeInsets.fromLTRB(0, 45, 0, 10),
@@ -124,7 +127,10 @@ class _DetailScreenState extends State<DetailScreen> {
                 ),
 
               ),
-
+              Positioned(child: AppBar(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+              )),
             ],
           ),
         ),

@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:455822021680:android:d88702c838124f5a04c9f5",
         "android_client_info": {
-          "package_name": "com.example.MovieReviewApp"
+          "package_name": "com.oyoung.Movier"
         }
       },
       "oauth_client": [
@@ -34,7 +34,7 @@
               "client_id": "455822021680-v24mrk56dh8jk84o8pqt53jdr7gs7q7d.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.MovieReviewApp"
+                "bundle_id": "com.oyoung.Movier"
               }
             }
           ]

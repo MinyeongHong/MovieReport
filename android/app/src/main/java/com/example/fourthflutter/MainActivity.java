@@ -1,4 +1,4 @@
-package com.example.MovieReviewApp;
+package com.oyoung.Movier;
 
 import io.flutter.embedding.android.FlutterActivity;
 

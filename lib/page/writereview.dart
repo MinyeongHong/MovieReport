@@ -5,7 +5,6 @@ import 'package:MovieReviewApp/widget/user_db_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:MovieReviewApp/contents/model_movie.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'dart:ui';
 import 'package:intl/intl.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -20,7 +19,7 @@ class ReviewScreen extends StatefulWidget {
 }
 
 class _ReviewScreenState extends State<ReviewScreen> {
-  InterstitialAd? _interstitialAd;
+  //InterstitialAd? _interstitialAd;
   DateTime _selectedDate = DateTime.now();
   late double rated;
   bool ckdate = false;
@@ -34,9 +33,9 @@ class _ReviewScreenState extends State<ReviewScreen> {
   @override
   void initState() {
     super.initState();
-    _createInterstitialAd();
+   // _createInterstitialAd();
   }
-
+/*
   void _createInterstitialAd() {
     InterstitialAd.load(
         adUnitId: InterstitialAd.testAdUnitId,
@@ -74,7 +73,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
     _interstitialAd!.show();
     _interstitialAd = null;
   }
-
+*/
   void _presentDatePicker() {
     showDatePicker(
             context: context,
@@ -270,6 +269,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                         color: Color(0xFFF5F5F1))),
                 onPressed: () {
                   saveDB();
+                  Navigator.pop(parentcontext);
                 },
               )
             ]),
@@ -278,7 +278,6 @@ class _ReviewScreenState extends State<ReviewScreen> {
   }
 
   Future<void> saveDB() async {
-    _showInterstitialAd();
     bool sucess = true;
     try {
       DBHelper sd = DBHelper();
@@ -317,17 +316,20 @@ class _ReviewScreenState extends State<ReviewScreen> {
       sucess = false;
     }
     if (sucess) {
-      sleep(const Duration(seconds:1));
       showDialog(
         context: context,
+
         barrierDismissible: true, // user must tap button!
         builder: (BuildContext alert_context) {
           return AlertDialog(
             content: Text("리뷰가 성공적으로 등록되었습니다!"),
+
           );
         },
+
       );
     }
+
   }
 
   String str2sha512(String text) {
